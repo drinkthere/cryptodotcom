@@ -24,44 +24,38 @@ type (
 		Suspended         bool                  `json:"suspended"`
 		Terminated        bool                  `json:"terminated"`
 	}
-	//Balance struct {
-	//	TotalEq     okx.JSONFloat64   `json:"totalEq"`
-	//	IsoEq       okx.JSONFloat64   `json:"isoEq"`
-	//	AdjEq       okx.JSONFloat64   `json:"adjEq,omitempty"`
-	//	OrdFroz     okx.JSONFloat64   `json:"ordFroz,omitempty"`
-	//	Imr         okx.JSONFloat64   `json:"imr,omitempty"`
-	//	Mmr         okx.JSONFloat64   `json:"mmr,omitempty"`
-	//	MgnRatio    okx.JSONFloat64   `json:"mgnRatio,omitempty"`
-	//	NotionalUsd okx.JSONFloat64   `json:"notionalUsd,omitempty"`
-	//	Details     []*BalanceDetails `json:"details,omitempty"`
-	//	UTime       okx.JSONTime      `json:"uTime"`
-	//}
-	//
-	//BalanceDetails struct {
-	//	Ccy           string          `json:"ccy"`
-	//	Eq            okx.JSONFloat64 `json:"eq"`
-	//	CashBal       okx.JSONFloat64 `json:"cashBal"`
-	//	IsoEq         okx.JSONFloat64 `json:"isoEq,omitempty"`
-	//	AvailEq       okx.JSONFloat64 `json:"availEq,omitempty"`
-	//	DisEq         okx.JSONFloat64 `json:"disEq"`
-	//	AvailBal      okx.JSONFloat64 `json:"availBal"`
-	//	FrozenBal     okx.JSONFloat64 `json:"frozenBal"`
-	//	OrdFrozen     okx.JSONFloat64 `json:"ordFrozen"`
-	//	Liab          okx.JSONFloat64 `json:"liab,omitempty"`
-	//	Upl           okx.JSONFloat64 `json:"upl,omitempty"`
-	//	UplLib        okx.JSONFloat64 `json:"uplLib,omitempty"`
-	//	CrossLiab     okx.JSONFloat64 `json:"crossLiab,omitempty"`
-	//	IsoLiab       okx.JSONFloat64 `json:"isoLiab,omitempty"`
-	//	MgnRatio      okx.JSONFloat64 `json:"mgnRatio,omitempty"`
-	//	Interest      okx.JSONFloat64 `json:"interest,omitempty"`
-	//	Twap          okx.JSONFloat64 `json:"twap,omitempty"`
-	//	MaxLoan       okx.JSONFloat64 `json:"maxLoan,omitempty"`
-	//	EqUsd         okx.JSONFloat64 `json:"eqUsd"`
-	//	NotionalLever okx.JSONFloat64 `json:"notionalLever,omitempty"`
-	//	StgyEq        okx.JSONFloat64 `json:"stgyEq"`
-	//	IsoUpl        okx.JSONFloat64 `json:"isoUpl,omitempty"`
-	//	UTime         okx.JSONTime    `json:"uTime"`
-	//}
+
+	Balance struct {
+		InstrumentName            string            `json:"instrument_name"`
+		TotalAvailableBalance     string            `json:"total_available_balance"`
+		TotalMarginBalance        string            `json:"total_margin_balance"`
+		TotalInitialMargin        string            `json:"total_initial_margin"`
+		TotalPositionIm           string            `json:"total_position_im"`
+		TotalHaircut              string            `json:"total_haircut"`
+		TotalMaintenanceMargin    string            `json:"total_maintenance_margin"`
+		TotalPositionCost         string            `json:"total_position_cost"`
+		TotalCashBalance          string            `json:"total_cash_balance"`
+		TotalCollateralValue      string            `json:"total_collateral_value"`
+		TotalSessionUnrealizedPnl string            `json:"total_session_unrealized_pnl"`
+		TotalSessionRealizedPnl   string            `json:"total_session_realized_pnl"`
+		IsLiquidating             bool              `json:"is_liquidating"`
+		TotalEffectiveLeverage    string            `json:"total_effective_leverage"`
+		PositionLimit             string            `json:"position_limit"`
+		UsedPositionLimit         string            `json:"used_position_limit"`
+		PositionBalances          []*BalanceDetails `json:"position_balances"`
+	}
+
+	BalanceDetails struct {
+		InstrumentName       string `json:"instrument_name"`
+		Quantity             string `json:"quantity"`
+		MarketValue          string `json:"market_value"`
+		CollateralEligible   bool   `json:"collateral_eligible"`
+		Haircut              string `json:"haircut"`
+		CollateralAmount     string `json:"collateral_amount"`
+		MaxWithdrawalBalance string `json:"max_withdrawal_balance"`
+		ReservedQty          string `json:"reserved_qty"`
+	}
+
 	//Position struct {
 	//	InstID      string             `json:"instId"`
 	//	PosCcy      string             `json:"posCcy,omitempty"`

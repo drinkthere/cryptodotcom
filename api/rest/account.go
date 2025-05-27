@@ -31,10 +31,9 @@ func (c *Account) GetAccounts(req requests.GetAccounts) (response responses.GetA
 	return
 }
 
-/*
 // GetBalance
-func (c *Account) GetBalance() (response responses.GetBalance, err error) {
-	p := "/private/user-balance"
+func (c *Account) GetBalances() (response responses.GetBalances, err error) {
+	p := "private/user-balance"
 	m := cryptodotcom.S2M(map[string]string{})
 	res, err := c.client.Do(http.MethodPost, p, true, m)
 	if err != nil {
@@ -47,6 +46,7 @@ func (c *Account) GetBalance() (response responses.GetBalance, err error) {
 	return
 }
 
+/*
 // GetPositions
 func (c *Account) GetPositions(req requests.GetPositions) (response responses.GetPositions, err error) {
 	p := "/private/get-positions"

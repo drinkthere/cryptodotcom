@@ -14,6 +14,15 @@ type (
 		responses.Basic
 		Result GetAccountsResult `json:"result"`
 	}
+
+	GetBalancesResult struct {
+		Data []*account.Balance `json:"data"`
+	}
+	GetBalances struct {
+		responses.Basic
+		Result GetBalancesResult `json:"result"`
+	}
+
 	//GetBalance struct {
 	//	responses.Basic
 	//	Balances []*models.Balance `json:"data,omitempty"`

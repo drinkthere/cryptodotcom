@@ -6,9 +6,6 @@ type (
 		Page     string `json:"page,omitempty,string"`
 	}
 
-	//GetBalance struct {
-	//	Ccy []string `json:"ccy,omitempty"`
-	//}
 	//GetPositions struct {
 	//	InstID   []string           `json:"instId,omitempty"`
 	//	PosID    []string           `json:"posId,omitempty"`
