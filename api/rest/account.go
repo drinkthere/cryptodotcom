@@ -47,7 +47,7 @@ func (c *Account) GetBalances() (response responses.GetBalances, err error) {
 func (c *Account) GetPositions(req requests.GetPositions) (response responses.GetPositions, err error) {
 	p := "private/get-positions"
 	m := cryptodotcom.S2M(req)
-	res, err := c.client.Do(http.MethodGet, p, true, m)
+	res, err := c.client.Do(http.MethodPost, p, true, m)
 	if err != nil {
 		return
 	}
