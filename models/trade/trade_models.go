@@ -11,7 +11,7 @@ type (
 	Order struct {
 		AccountID          string                   `json:"account_id"`
 		OrderID            string                   `json:"order_id"`
-		ClientOID          string                   `json:"client_oid"`
+		ClientOrderID      string                   `json:"client_oid"`
 		OrderType          cryptodotcom.OrderType   `json:"order_type"`
 		TimeInForce        cryptodotcom.TimeInForce `json:"time_in_force"`
 		Side               cryptodotcom.OrderSide   `json:"side"`
