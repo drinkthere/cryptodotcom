@@ -19,7 +19,7 @@ func NewPublicData(c *ClientRest) *PublicData {
 // GetInstruments
 // Retrieve a list of instruments with open contracts.
 func (c *PublicData) GetInstruments() (response responses.GetInstruments, err error) {
-	p := "public/get-instruments"
+	p := "/public/get-instruments"
 	m := cryptodotcom.S2M(map[string]string{})
 	res, err := c.client.Do(http.MethodGet, p, false, m)
 	if err != nil {

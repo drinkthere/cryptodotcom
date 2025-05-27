@@ -6,7 +6,7 @@ type (
 	Instrument struct {
 		Symbol            string                      `json:"symbol"`
 		InstType          cryptodotcom.InstrumentType `json:"inst_type"`
-		DisplayName       string                      `json:"display_name,,omitempty"`
+		DisplayName       string                      `json:"display_name,omitempty"`
 		BaseCcy           string                      `json:"base_ccy,omitempty"`
 		QuoteCcy          string                      `json:"quote_ccy,omitempty"`
 		QuoteDecimals     int                         `json:"quote_decimals,omitempty"`
@@ -15,6 +15,7 @@ type (
 		QtyTickSize       string                      `json:"qty_tick_size,omitempty"`
 		MaxLeverage       string                      `json:"max_leverage,omitempty"`
 		Tradable          bool                        `json:"tradable,omitempty"`
+		BetaProduct       bool                        `json:"beta_product,omitempty"`
 		ExpiryTimestampMs int                         `json:"expiry_timestamp_ms,omitempty"`
 		UnderlyingSymbol  string                      `json:"underlying_symbol,omitempty"`
 	}

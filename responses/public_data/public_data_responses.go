@@ -6,8 +6,11 @@ import (
 )
 
 type (
+	GetInstrumentsResult struct {
+		Data []*publicdata.Instrument `json:"data"`
+	}
 	GetInstruments struct {
 		responses.Basic
-		Data []*publicdata.Instrument `json:"result"`
+		Result GetInstrumentsResult `json:"result"`
 	}
 )

@@ -1,10 +1,13 @@
 package responses
 
+import "github.com/drinkthere/cryptodotcom"
+
 type (
 	Basic struct {
-		ID      int64  `json:"id,omitempty"`
-		Code    int    `json:"code"`
-		Method  string `json:"method,string"`
-		Message string `json:"message,omitempty"`
+		ID      cryptodotcom.JSONInt64 `json:"id,omitempty"`
+		Code    cryptodotcom.JSONInt64 `json:"code"`
+		Method  string                 `json:"method"`
+		Msg     string                 `json:"msg,omitempty"`
+		Message string                 `json:"message,omitempty"`
 	}
 )

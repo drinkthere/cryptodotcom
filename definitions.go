@@ -57,11 +57,11 @@ type (
 )
 
 const (
-	RestURL     = BaseURL("https://api.crypto.com")
+	RestURL     = BaseURL("https://api.crypto.com/exchange/v1")
 	MarketWsURL = BaseURL("wss://stream.crypto.com/exchange/v1/market")
 	UserWsURL   = BaseURL("wss://stream.crypto.com/exchange/v1/user")
 
-	ColoRestURL     = BaseURL("https://api.crypto.com")
+	ColoRestURL     = BaseURL("https://api.crypto.com/exchange/v1")
 	ColoMarketWsURL = BaseURL("wss://stream.crypto.com/exchange/v1/market")
 	ColoUserWsURL   = BaseURL("wss://stream.crypto.com/exchange/v1/user")
 
