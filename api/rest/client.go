@@ -156,13 +156,16 @@ func GenerateSignature(method, id, apiKey, nonce string, apiSecret []byte, param
 			for _, val := range v {
 				paramStrBuilder.WriteString(val)
 			}
+		case []interface{}:
+			for _, item := range v {
+				paramStrBuilder.WriteString(item.(string))
+			}
 		default:
 			// Fallback for other types
 			paramStrBuilder.WriteString(fmt.Sprintf("%v", v))
 		}
 	}
 	paramStr := paramStrBuilder.String()
-
 	signStr := method + id + apiKey + paramStr + nonce
 
 	mac := hmac.New(sha256.New, apiSecret)

@@ -76,7 +76,8 @@ const (
 	OrderMarket = OrderType("MARKET")
 	OrderLimit  = OrderType("LIMIT")
 
-	ExecInstPostOnly = ExecInst("POST_ONLY")
+	ExecInstPostOnly    = ExecInst("POST_ONLY")
+	ExecInstLiquidation = ExecInst("LIQUIDATION")
 
 	TimeInForceGTC = TimeInForce("GOOD_TILL_CANCEL")
 	TimeInForceFOK = TimeInForce("FILL_OR_KILL")
