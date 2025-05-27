@@ -30,25 +30,6 @@ func (c *Trade) CreateOrder(req requests.CreateOrder) (response responses.Create
 	return
 }
 
-//func (c *Trade) CancelOrder(req requests.CancelOrder) (response responses.CancelOrder, err error) {
-//	var p string
-//	var res *http.Response
-//
-//	p = "private/cancel-order"
-//	m := cryptodotcom.S2M(req)
-//	res, err = c.client.Do(http.MethodPost, p, true, m)
-//
-//	if err != nil {
-//		return
-//	}
-//	defer res.Body.Close()
-//	d := json.NewDecoder(res.Body)
-//	err = d.Decode(&response)
-//	return
-//}
-
-// CancelAllOrders
-
 func (c *Trade) GetOpenOrders(req requests.GetOpenOrders) (response responses.GetOpenOrders, err error) {
 	p := "private/get-open-orders"
 	m := cryptodotcom.S2M(req)
@@ -61,3 +42,23 @@ func (c *Trade) GetOpenOrders(req requests.GetOpenOrders) (response responses.Ge
 	err = d.Decode(&response)
 	return
 }
+
+func (c *Trade) CancelOrder(req requests.CancelOrder) (response responses.CancelOrder, err error) {
+	var p string
+	var res *http.Response
+
+	p = "private/cancel-order"
+	m := cryptodotcom.S2M(req)
+	res, err = c.client.Do(http.MethodPost, p, true, m)
+
+	if err != nil {
+		return
+	}
+	defer res.Body.Close()
+	d := json.NewDecoder(res.Body)
+	err = d.Decode(&response)
+	return
+}
+
+// @todo
+// CancelAllOrders

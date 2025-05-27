@@ -8,7 +8,7 @@ import (
 type (
 	CreateOrder struct {
 		responses.Basic
-		Result *trade.CreateOrderResult `json:"result"`
+		Result *trade.HandleOrderResult `json:"result"`
 	}
 
 	GetOpenOrdersResult struct {
@@ -19,9 +19,8 @@ type (
 		Result GetOpenOrdersResult `json:"result"`
 	}
 
-	//CancelOrder struct {
-	//	responses.Basic
-	//	CancelOrders []*trade.CancelOrder `json:"data"`
-	//}
-	//
+	CancelOrder struct {
+		responses.Basic
+		Result *trade.HandleOrderResult `json:"result"`
+	}
 )

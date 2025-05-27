@@ -3,7 +3,7 @@ package trade
 import "github.com/drinkthere/cryptodotcom"
 
 type (
-	CreateOrderResult struct {
+	HandleOrderResult struct {
 		OrderID       string `json:"order_id"`
 		ClientOrderID string `json:"client_oid"`
 	}
@@ -34,12 +34,4 @@ type (
 		InstrumentName     string                   `json:"instrument_name"`
 		FeeInstrumentName  string                   `json:"fee_instrument_name"`
 	}
-
-	//CancelOrder struct {
-	//	OrdID   string          `json:"ordId"`
-	//	ClOrdID string          `json:"clOrdId"`
-	//	SMsg    string          `json:"sMsg"`
-	//	SCode   okx.JSONFloat64 `json:"sCode"`
-	//}
-	//
 )

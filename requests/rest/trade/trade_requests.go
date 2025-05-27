@@ -21,11 +21,8 @@ type (
 		InstrumentName string `json:"instrument_name,omitempty"`
 	}
 
-	//CancelOrder struct {
-	//	ID      string `json:"-"`
-	//	InstID  string `json:"instId"`
-	//	OrdID   string `json:"ordId,omitempty"`
-	//	ClOrdID string `json:"clOrdId,omitempty"`
-	//}
-	//
+	CancelOrder struct {
+		OrderID       string `json:"order_id,omitempty"`
+		ClientOrderID string `json:"client_oid,omitempty"`
+	}
 )
