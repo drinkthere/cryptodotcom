@@ -16,6 +16,11 @@ type (
 		SpotMargin        cryptodotcom.OrderMode   `json:"spot_margin,omitempty"`
 		FeeInstrumentName string                   `json:"fee_instrument_name,omitempty"`
 	}
+
+	GetOpenOrders struct {
+		InstrumentName string `json:"instrument_name,omitempty"`
+	}
+
 	//CancelOrder struct {
 	//	ID      string `json:"-"`
 	//	InstID  string `json:"instId"`
@@ -23,14 +28,4 @@ type (
 	//	ClOrdID string `json:"clOrdId,omitempty"`
 	//}
 	//
-	//OrderList struct {
-	//	Uly      string             `json:"uly,omitempty"`
-	//	InstID   string             `json:"instId,omitempty"`
-	//	After    float64            `json:"after,omitempty,string"`
-	//	Before   float64            `json:"before,omitempty,string"`
-	//	Limit    float64            `json:"limit,omitempty,string"`
-	//	InstType okx.InstrumentType `json:"instType,omitempty"`
-	//	OrdType  okx.OrderType      `json:"ordType,omitempty"`
-	//	State    okx.OrderState     `json:"state,omitempty"`
-	//}
 )

@@ -14,25 +14,25 @@ type (
 	ExecInst       string
 	TimeInForce    string
 	OrderMode      string
+	OrderStatus    string
 
-	ContractType string
-	PositionType string
-	PositionSide string
-	ActualSide   string
-	TradeMode    string
-	CountAction  string
-	OrderSide    string
-	GreekType    string
-	BarSize      string
-	TradeSide    string
-	ChannelName  string
-	Operation    string
-	EventType    string
+	ContractType  string
+	PositionType  string
+	PositionSide  string
+	ActualSide    string
+	TradeMode     string
+	CountAction   string
+	OrderSide     string
+	GreekType     string
+	BarSize       string
+	TradeSide     string
+	ChannelName   string
+	Operation     string
+	EventType     string
+	AlgoOrderType string
+	QuantityType  string
+	OrderFlowType string
 
-	AlgoOrderType        string
-	QuantityType         string
-	OrderFlowType        string
-	OrderState           string
 	ActionType           string
 	APIKeyAccess         string
 	OptionType           string
@@ -158,14 +158,17 @@ const (
 	ClassC = FeeCategory(3)
 	ClassD = FeeCategory(4)
 
-	OrderCancel          = OrderState("canceled")
-	OrderPause           = OrderState("pause")
-	OrderLive            = OrderState("live")
-	OrderPartiallyFilled = OrderState("partially_filled")
-	OrderFilled          = OrderState("filled")
-	OrderUnfilled        = OrderState("unfilled")
-	OrderEffective       = OrderState("effective")
-	OrderFailed          = OrderState("order_failed")
+	OrderNew     = OrderStatus("NEW")
+	OrderPending = OrderStatus("PENDING")
+	OrderActive  = OrderStatus("ACTIVE")
+
+	//OrderCancel = OrderState("canceled")
+	//OrderPause  = OrderState("pause")
+	//OrderPartiallyFilled = OrderState("partially_filled")
+	//OrderFilled          = OrderState("filled")
+	//OrderUnfilled        = OrderState("unfilled")
+	//OrderEffective       = OrderState("effective")
+	//OrderFailed          = OrderState("order_failed")
 
 	TransferWithinAccount     = TransferType(0)
 	MasterAccountToSubAccount = TransferType(1)
@@ -178,69 +181,6 @@ const (
 	SwapAccount    = AccountType(9)
 	OptionsAccount = AccountType(12)
 	UnifiedAccount = AccountType(18)
-
-	WaitingForConfirmation     = DepositState(0)
-	DepositCredited            = DepositState(1)
-	DepositSuccessful          = DepositState(2)
-	DepositTemporarySuspension = DepositState(8)
-
-	WithdrawalokxDestination            = WithdrawalDestination(3)
-	WithdrawalDigitalAddressDestination = WithdrawalDestination(4)
-
-	WithdrawalPendingCancel              = WithdrawalState(-3)
-	WithdrawalCanceled                   = WithdrawalState(-2)
-	WithdrawalFailed                     = WithdrawalState(-1)
-	WithdrawalPending                    = WithdrawalState(0)
-	WithdrawalSending                    = WithdrawalState(1)
-	WithdrawalSent                       = WithdrawalState(2)
-	WithdrawalAwaitingEmailVerification  = WithdrawalState(3)
-	WithdrawalAwaitingManualVerification = WithdrawalState(4)
-	WithdrawalIdentityManualVerification = WithdrawalState(5)
-
-	ActionPurchase = ActionType("purchase")
-	ActionRedempt  = ActionType("redempt")
-
-	APIKeyReadOnly = APIKeyAccess("read_only")
-	APIKeyTrade    = APIKeyAccess("trade")
-	APIKeyWithdraw = APIKeyAccess("withdraw")
-
-	OptionCall = OptionType("C")
-	OptionPut  = OptionType("P")
-
-	AliasThisWeek    = AliasType("this_week")
-	AliasNextWeek    = AliasType("next_week")
-	AliasQuarter     = AliasType("quarter")
-	AliasNextQuarter = AliasType("next_quarter")
-
-	InstrumentLive    = InstrumentState("live")
-	InstrumentSuspend = InstrumentState("suspend")
-	InstrumentPreOpen = InstrumentState("preopen")
-
-	Delivery   = DeliveryExerciseType("delivery")
-	Exercise   = DeliveryExerciseType("exercised")
-	ExpiredOtm = DeliveryExerciseType("expired_otm")
-
-	CandleStick1Y  = CandleStickWsBarSize("candle1Y")
-	CandleStick6M  = CandleStickWsBarSize("candle6M")
-	CandleStick3M  = CandleStickWsBarSize("candle3M")
-	CandleStick1M  = CandleStickWsBarSize("candle1M")
-	CandleStick5D  = CandleStickWsBarSize("candle5D")
-	CandleStick3D  = CandleStickWsBarSize("candle3D")
-	CandleStick2D  = CandleStickWsBarSize("candle2D")
-	CandleStick1D  = CandleStickWsBarSize("candle1D")
-	CandleStick12H = CandleStickWsBarSize("candle12H")
-	CandleStick6H  = CandleStickWsBarSize("candle6H")
-	CandleStick4H  = CandleStickWsBarSize("candle4H")
-	CandleStick2H  = CandleStickWsBarSize("candle2H")
-	CandleStick1H  = CandleStickWsBarSize("candle1H")
-	CandleStick30m = CandleStickWsBarSize("candle30m")
-	CandleStick15m = CandleStickWsBarSize("candle15m")
-	CandleStick5m  = CandleStickWsBarSize("candle5m")
-	CandleStick3m  = CandleStickWsBarSize("candle3m")
-	CandleStick1m  = CandleStickWsBarSize("candle1m")
-
-	ConvertTypeContract = ConvertType(1)
-	ConvertTypeCurrency = ConvertType(2)
 )
 
 func (t JSONTime) String() string { return time.Time(t).String() }

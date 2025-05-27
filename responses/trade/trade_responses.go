@@ -11,14 +11,17 @@ type (
 		Result *trade.CreateOrderResult `json:"result"`
 	}
 
+	GetOpenOrdersResult struct {
+		Data []*trade.Order `json:"data"`
+	}
+	GetOpenOrders struct {
+		responses.Basic
+		Result GetOpenOrdersResult `json:"result"`
+	}
+
 	//CancelOrder struct {
 	//	responses.Basic
 	//	CancelOrders []*trade.CancelOrder `json:"data"`
 	//}
 	//
-	//OrderList struct {
-	//	responses.Basic
-	//	Orders []*trade.Order `json:"data"`
-	//}
-
 )

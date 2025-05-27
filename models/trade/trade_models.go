@@ -1,10 +1,40 @@
 package trade
 
+import "github.com/drinkthere/cryptodotcom"
+
 type (
 	CreateOrderResult struct {
 		OrderID       string `json:"order_id"`
 		ClientOrderID string `json:"client_oid"`
 	}
+
+	Order struct {
+		AccountID          string                   `json:"account_id"`
+		OrderID            string                   `json:"order_id"`
+		ClientOID          string                   `json:"client_oid"`
+		OrderType          cryptodotcom.OrderType   `json:"order_type"`
+		TimeInForce        cryptodotcom.TimeInForce `json:"time_in_force"`
+		Side               cryptodotcom.OrderSide   `json:"side"`
+		ExecInst           []cryptodotcom.ExecInst  `json:"exec_inst"`
+		Quantity           string                   `json:"quantity"`
+		LimitPrice         string                   `json:"limit_price"`
+		OrderValue         string                   `json:"order_value"`
+		MakerFeeRate       string                   `json:"maker_fee_rate"`
+		TakerFeeRate       string                   `json:"taker_fee_rate"`
+		AvgPrice           string                   `json:"avg_price"`
+		CumulativeQuantity string                   `json:"cumulative_quantity"`
+		CumulativeValue    string                   `json:"cumulative_value"`
+		CumulativeFee      string                   `json:"cumulative_fee"`
+		Status             cryptodotcom.OrderStatus `json:"status"`
+		UpdateUserID       string                   `json:"update_user_id"`
+		OrderDate          string                   `json:"order_date"`
+		CreateTime         cryptodotcom.JSONTime    `json:"create_time"`
+		CreateTimeNS       string                   `json:"create_time_ns"`
+		UpdateTime         cryptodotcom.JSONTime    `json:"update_time"`
+		InstrumentName     string                   `json:"fee_instrument_name"`
+		FeeInstrumentName  string                   `json:"cumulative_fee"`
+	}
+
 	//CancelOrder struct {
 	//	OrdID   string          `json:"ordId"`
 	//	ClOrdID string          `json:"clOrdId"`
@@ -12,43 +42,4 @@ type (
 	//	SCode   okx.JSONFloat64 `json:"sCode"`
 	//}
 	//
-	//Order struct {
-	//	InstID       string             `json:"instId"`
-	//	Ccy          string             `json:"ccy"`
-	//	OrdID        string             `json:"ordId"`
-	//	AlgoID       string             `json:"algoId"`
-	//	ClOrdID      string             `json:"clOrdId"`
-	//	AlgoClOrdID  string             `json:"algoClOrdId"`
-	//	TradeID      string             `json:"tradeId"`
-	//	Tag          string             `json:"tag"`
-	//	Category     string             `json:"category"`
-	//	FeeCcy       string             `json:"feeCcy"`
-	//	RebateCcy    string             `json:"rebateCcy"`
-	//	QuickMgnType string             `json:"quickMgnType"`
-	//	ReduceOnly   string             `json:"reduceOnly"`
-	//	Px           okx.JSONFloat64    `json:"px"`
-	//	Sz           okx.JSONFloat64    `json:"sz"`
-	//	Pnl          okx.JSONFloat64    `json:"pnl"`
-	//	AccFillSz    okx.JSONFloat64    `json:"accFillSz"`
-	//	FillPx       okx.JSONFloat64    `json:"fillPx"`
-	//	FillSz       okx.JSONFloat64    `json:"fillSz"`
-	//	FillTime     okx.JSONFloat64    `json:"fillTime"`
-	//	AvgPx        okx.JSONFloat64    `json:"avgPx"`
-	//	Lever        okx.JSONFloat64    `json:"lever"`
-	//	TpTriggerPx  okx.JSONFloat64    `json:"tpTriggerPx"`
-	//	TpOrdPx      okx.JSONFloat64    `json:"tpOrdPx"`
-	//	SlTriggerPx  okx.JSONFloat64    `json:"slTriggerPx"`
-	//	SlOrdPx      okx.JSONFloat64    `json:"slOrdPx"`
-	//	Fee          okx.JSONFloat64    `json:"fee"`
-	//	Rebate       okx.JSONFloat64    `json:"rebate"`
-	//	State        okx.OrderState     `json:"state"`
-	//	TdMode       okx.TradeMode      `json:"tdMode"`
-	//	PosSide      okx.PositionSide   `json:"posSide"`
-	//	Side         okx.OrderSide      `json:"side"`
-	//	OrdType      okx.OrderType      `json:"ordType"`
-	//	InstType     okx.InstrumentType `json:"instType"`
-	//	TgtCcy       okx.QuantityType   `json:"tgtCcy"`
-	//	UTime        okx.JSONTime       `json:"uTime"`
-	//	CTime        okx.JSONTime       `json:"cTime"`
-	//}
 )
