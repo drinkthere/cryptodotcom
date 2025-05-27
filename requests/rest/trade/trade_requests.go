@@ -11,7 +11,7 @@ type (
 		Quantity          string                 `json:"quantity"`
 		Notional          string                 `json:"notional,omitempty"`
 		ClientOrderID     string                 `json:"client_oid,omitempty"`
-		ExecInst          []string               `json:"exec_inst,omitempty"`
+		ExecInst          cryptodotcom.ExecInst  `json:"exec_inst,omitempty"`
 		TimeInForce       string                 `json:"time_in_force,omitempty"`
 		SpotMargin        string                 `json:"spot_margin,omitempty"`
 		FeeInstrumentName string                 `json:"fee_instrument_name,omitempty"`
