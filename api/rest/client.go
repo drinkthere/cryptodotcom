@@ -74,7 +74,7 @@ func NewClient(apiKey, secretKey string, baseURL cryptodotcom.BaseURL, destinati
 }
 
 // Do the http request to the server
-func (c *ClientRest) Do(httpMethod, method string, private bool, params map[string]string) (*http.Response, error) {
+func (c *ClientRest) Do(httpMethod, method string, private bool, params map[string]interface{}) (*http.Response, error) {
 	u := fmt.Sprintf("%s%s", c.baseURL, method)
 	var (
 		r   *http.Request
@@ -82,6 +82,7 @@ func (c *ClientRest) Do(httpMethod, method string, private bool, params map[stri
 	)
 	reqID := GenerateRequestID()
 	nonce := strconv.FormatInt(time.Now().UnixMilli(), 10)
+
 	if httpMethod == http.MethodGet {
 		r, err = http.NewRequest(http.MethodGet, u, nil)
 		if err != nil {
@@ -90,7 +91,18 @@ func (c *ClientRest) Do(httpMethod, method string, private bool, params map[stri
 
 		q := r.URL.Query()
 		for k, v := range params {
-			q.Add(k, strings.ReplaceAll(v, "\"", ""))
+			// Handle different types of values
+			switch val := v.(type) {
+			case string:
+				q.Add(k, strings.ReplaceAll(val, "\"", ""))
+			case []string:
+				for _, item := range val {
+					q.Add(k, strings.ReplaceAll(item, "\"", ""))
+				}
+			default:
+				// Convert other types to string
+				q.Add(k, fmt.Sprintf("%v", val))
+			}
 		}
 		r.URL.RawQuery = q.Encode()
 		method += "?id=" + reqID + "&nonce=" + nonce
@@ -98,74 +110,34 @@ func (c *ClientRest) Do(httpMethod, method string, private bool, params map[stri
 			method += "&" + r.URL.RawQuery
 		}
 	} else {
-
 		bodyArr := map[string]interface{}{}
 		bodyArr["id"] = reqID
 		bodyArr["method"] = method
 		bodyArr["params"] = params
 		bodyArr["nonce"] = nonce
+
 		if private {
 			sign := GenerateSignature(method, reqID, c.apiKey, nonce, c.secretKey, params)
 			bodyArr["api_key"] = c.apiKey
 			bodyArr["sig"] = sign
 		}
-		var j []byte
-		j, err = json.Marshal(bodyArr)
+
+		j, err := json.Marshal(bodyArr)
 		if err != nil {
 			return nil, err
 		}
+
 		r, err = http.NewRequest(httpMethod, u, bytes.NewBuffer(j))
 		if err != nil {
 			return nil, err
 		}
 		r.Header.Add("Content-Type", "application/json")
 	}
-	if err != nil {
-		return nil, err
-	}
 
 	return c.Client.Do(r)
 }
 
-//
-//// DoBatch the private post request to the server with parameters of type slice
-//func (c *ClientRest) DoBatch(path string, params interface{}) (*http.Response, error) {
-//	httpMethod := "POST"
-//	u := fmt.Sprintf("%s%s", c.baseURL, path)
-//	var (
-//		r    *http.Request
-//		err  error
-//		j    []byte
-//		body string
-//	)
-//
-//	j, err = json.Marshal(params)
-//	if err != nil {
-//		return nil, err
-//	}
-//	body = string(j)
-//	if body == "{}" || body == "[]" {
-//		body = ""
-//	}
-//	r, err = http.NewRequest(httpMethod, u, bytes.NewBuffer(j))
-//	if err != nil {
-//		return nil, err
-//	}
-//	r.Header.Add("Content-Type", "application/json")
-//
-//	if err != nil {
-//		return nil, err
-//	}
-//
-//	timestamp, sign := c.sign(httpMethod, path, body)
-//	r.Header.Add("OK-ACCESS-KEY", c.apiKey)
-//	r.Header.Add("OK-ACCESS-SIGN", sign)
-//	r.Header.Add("OK-ACCESS-TIMESTAMP", timestamp)
-//
-//	return c.Client.Do(r)
-//}
-
-func GenerateSignature(method, id, apiKey, nonce string, apiSecret []byte, params map[string]string) string {
+func GenerateSignature(method, id, apiKey, nonce string, apiSecret []byte, params map[string]interface{}) string {
 	var keys []string
 	for k := range params {
 		keys = append(keys, k)
@@ -175,7 +147,19 @@ func GenerateSignature(method, id, apiKey, nonce string, apiSecret []byte, param
 	var paramStrBuilder strings.Builder
 	for _, k := range keys {
 		paramStrBuilder.WriteString(k)
-		paramStrBuilder.WriteString(params[k])
+
+		// Handle different parameter types
+		switch v := params[k].(type) {
+		case string:
+			paramStrBuilder.WriteString(v)
+		case []string:
+			for _, val := range v {
+				paramStrBuilder.WriteString(val)
+			}
+		default:
+			// Fallback for other types
+			paramStrBuilder.WriteString(fmt.Sprintf("%v", v))
+		}
 	}
 	paramStr := paramStrBuilder.String()
 
@@ -185,7 +169,6 @@ func GenerateSignature(method, id, apiKey, nonce string, apiSecret []byte, param
 	mac.Write([]byte(signStr))
 	signature := mac.Sum(nil)
 
-	// Step 5: 转成 hex 字符串
 	return hex.EncodeToString(signature)
 }
 
