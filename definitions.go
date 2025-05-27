@@ -337,8 +337,8 @@ func (t *DepositState) UnmarshalJSON(s []byte) (err error) {
 	return
 }
 
-func S2M(i interface{}) map[string]string {
-	m := make(map[string]string)
+func S2M(i interface{}) map[string]interface{} {
+	m := make(map[string]interface{})
 	j, _ := json.Marshal(i)
 	_ = json.Unmarshal(j, &m)
 
