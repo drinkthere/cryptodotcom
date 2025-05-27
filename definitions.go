@@ -164,8 +164,8 @@ const (
 	CountIncrease = CountAction("add")
 	CountDecrease = CountAction("reduce")
 
-	OrderBuy  = OrderSide("buy")
-	OrderSell = OrderSide("sell")
+	OrderBuy  = OrderSide("BUY")
+	OrderSell = OrderSide("SELL")
 
 	GreekInCoin    = GreekType("PA")
 	GreekInDollars = GreekType("PB")
