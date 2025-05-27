@@ -8,8 +8,9 @@ import (
 type (
 	CreateOrder struct {
 		responses.Basic
-		PlaceOrders []*trade.CreateOrder `json:"data"`
+		Result *trade.CreateOrderResult `json:"result"`
 	}
+
 	//CancelOrder struct {
 	//	responses.Basic
 	//	CancelOrders []*trade.CancelOrder `json:"data"`

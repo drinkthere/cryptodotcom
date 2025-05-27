@@ -1,7 +1,7 @@
 package trade
 
 type (
-	CreateOrder struct {
+	CreateOrderResult struct {
 		OrderID       string `json:"order_id"`
 		ClientOrderID string `json:"client_oid"`
 	}
