@@ -12,8 +12,9 @@ type (
 	InstrumentType string
 	OrderType      string
 	ExecInst       string
+	TimeInForce    string
+	OrderMode      string
 
-	MarginMode   string
 	ContractType string
 	PositionType string
 	PositionSide string
@@ -72,9 +73,14 @@ const (
 	OrderBuy  = OrderSide("BUY")
 	OrderSell = OrderSide("SELL")
 
-	OrderMarket      = OrderType("MARKET")
-	OrderLimit       = OrderType("LIMIT")
+	OrderMarket = OrderType("MARKET")
+	OrderLimit  = OrderType("LIMIT")
+
 	ExecInstPostOnly = ExecInst("POST_ONLY")
+
+	TimeInForceGTC = TimeInForce("GOOD_TILL_CANCEL")
+	TimeInForceFOK = TimeInForce("FILL_OR_KILL")
+	TimeInForceIOC = TimeInForce("IMMEDIATE_OR_CANCEL")
 
 	SpotInstrument    = InstrumentType("SPOT")
 	MarginInstrument  = InstrumentType("MARGIN")
@@ -84,8 +90,8 @@ const (
 	WarrantInstrument = InstrumentType("WARRANT")
 	IndexInstrument   = InstrumentType("INDEX")
 
-	MarginCrossMode    = MarginMode("cross")
-	MarginIsolatedMode = MarginMode("isolated")
+	SpotOrderMode   = OrderMode("SPOT")
+	MarginOrderMode = OrderMode("MARGIN")
 
 	ContractLinearType  = ContractType("linear")
 	ContractInverseType = ContractType("inverse")
