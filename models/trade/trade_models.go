@@ -31,8 +31,8 @@ type (
 		CreateTime         cryptodotcom.JSONTime    `json:"create_time"`
 		CreateTimeNS       string                   `json:"create_time_ns"`
 		UpdateTime         cryptodotcom.JSONTime    `json:"update_time"`
-		InstrumentName     string                   `json:"fee_instrument_name"`
-		FeeInstrumentName  string                   `json:"cumulative_fee"`
+		InstrumentName     string                   `json:"instrument_name"`
+		FeeInstrumentName  string                   `json:"fee_instrument_name"`
 	}
 
 	//CancelOrder struct {
