@@ -56,48 +56,16 @@ type (
 		ReservedQty          string `json:"reserved_qty"`
 	}
 
-	//Position struct {
-	//	InstID      string             `json:"instId"`
-	//	PosCcy      string             `json:"posCcy,omitempty"`
-	//	LiabCcy     string             `json:"liabCcy,omitempty"`
-	//	OptVal      string             `json:"optVal,omitempty"`
-	//	Ccy         string             `json:"ccy"`
-	//	PosID       string             `json:"posId"`
-	//	TradeID     string             `json:"tradeId"`
-	//	Pos         okx.JSONFloat64    `json:"pos"`
-	//	AvailPos    okx.JSONFloat64    `json:"availPos,omitempty"`
-	//	AvgPx       okx.JSONFloat64    `json:"avgPx"`
-	//	BePx        okx.JSONFloat64    `json:"bePx"`
-	//	MarkPx      okx.JSONFloat64    `json:"markPx"`
-	//	IdxPx       okx.JSONFloat64    `json:"idxPx"`
-	//	UsdPx       okx.JSONFloat64    `json:"usdPx"`
-	//	Upl         okx.JSONFloat64    `json:"upl"`
-	//	UplRatio    okx.JSONFloat64    `json:"uplRatio"`
-	//	Lever       okx.JSONFloat64    `json:"lever"`
-	//	LiqPx       okx.JSONFloat64    `json:"liqPx,omitempty"`
-	//	Imr         okx.JSONFloat64    `json:"imr,omitempty"`
-	//	Margin      okx.JSONFloat64    `json:"margin,omitempty"`
-	//	MgnRatio    okx.JSONFloat64    `json:"mgnRatio"`
-	//	Mmr         okx.JSONFloat64    `json:"mmr"`
-	//	Liab        okx.JSONFloat64    `json:"liab,omitempty"`
-	//	Interest    okx.JSONFloat64    `json:"interest"`
-	//	NotionalUsd okx.JSONFloat64    `json:"notionalUsd"`
-	//	ADL         okx.JSONFloat64    `json:"adl"`
-	//	Last        okx.JSONFloat64    `json:"last"`
-	//	DeltaBS     okx.JSONFloat64    `json:"deltaBS"`
-	//	DeltaPA     okx.JSONFloat64    `json:"deltaPA"`
-	//	GammaBS     okx.JSONFloat64    `json:"gammaBS"`
-	//	GammaPA     okx.JSONFloat64    `json:"gammaPA"`
-	//	ThetaBS     okx.JSONFloat64    `json:"thetaBS"`
-	//	ThetaPA     okx.JSONFloat64    `json:"thetaPA"`
-	//	VegaBS      okx.JSONFloat64    `json:"vegaBS"`
-	//	VegaPA      okx.JSONFloat64    `json:"vegaPA"`
-	//	PosSide     okx.PositionSide   `json:"posSide"`
-	//	MgnMode     okx.MarginMode     `json:"mgnMode"`
-	//	InstType    okx.InstrumentType `json:"instType"`
-	//	CTime       okx.JSONTime       `json:"cTime"`
-	//	UTime       okx.JSONTime       `json:"uTime"`
-	//}
+	Position struct {
+		InstrumentName    string                `json:"instrument_name"`
+		Type              string                `json:"type"`
+		Quantity          string                `json:"quantity"`
+		Cost              string                `json:"cost"`
+		OpenPositionPnl   string                `json:"open_position_pnl"`
+		OpenPosCost       string                `json:"open_pos_cost"`
+		SessionPnl        string                `json:"session_pnl"`
+		UpdateTimestampMs cryptodotcom.JSONTime `json:"update_timestamp_ms"`
+	}
 	//BalanceAndPosition struct {
 	//	EventType okx.EventType     `json:"eventType"`
 	//	PTime     okx.JSONTime      `json:"pTime"`

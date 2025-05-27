@@ -23,12 +23,11 @@ type (
 		Result GetBalancesResult `json:"result"`
 	}
 
-	//GetBalance struct {
-	//	responses.Basic
-	//	Balances []*models.Balance `json:"data,omitempty"`
-	//}
-	//GetPositions struct {
-	//	responses.Basic
-	//	Positions []*models.Position `json:"data"`
-	//}
+	GetPositionsResult struct {
+		Data []*account.Position `json:"data"`
+	}
+	GetPositions struct {
+		responses.Basic
+		Result GetPositionsResult `json:"result"`
+	}
 )

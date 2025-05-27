@@ -16,7 +16,6 @@ func NewAccount(c *ClientRest) *Account {
 	return &Account{c}
 }
 
-// GetAccounts
 func (c *Account) GetAccounts(req requests.GetAccounts) (response responses.GetAccounts, err error) {
 	p := "private/get-accounts"
 	m := cryptodotcom.S2M(req)
@@ -31,7 +30,6 @@ func (c *Account) GetAccounts(req requests.GetAccounts) (response responses.GetA
 	return
 }
 
-// GetBalance
 func (c *Account) GetBalances() (response responses.GetBalances, err error) {
 	p := "private/user-balance"
 	m := cryptodotcom.S2M(map[string]string{})
@@ -46,10 +44,8 @@ func (c *Account) GetBalances() (response responses.GetBalances, err error) {
 	return
 }
 
-/*
-// GetPositions
 func (c *Account) GetPositions(req requests.GetPositions) (response responses.GetPositions, err error) {
-	p := "/private/get-positions"
+	p := "private/get-positions"
 	m := cryptodotcom.S2M(req)
 	res, err := c.client.Do(http.MethodGet, p, true, m)
 	if err != nil {
@@ -61,6 +57,8 @@ func (c *Account) GetPositions(req requests.GetPositions) (response responses.Ge
 
 	return
 }
+
+/*
 
 //// SetLeverage
 //func (c *Account) SetLeverage(req requests.SetLeverage) (response responses.Leverage, err error) {
