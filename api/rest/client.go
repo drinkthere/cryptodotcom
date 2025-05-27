@@ -21,11 +21,8 @@ import (
 
 // ClientRest is the rest api client
 type ClientRest struct {
-	//Account     *Account
-	//Trade       *Trade
-	//Market      *Market
-	PublicData *PublicData
-	//TradeData   *TradeData
+	Account     *Account
+	PublicData  *PublicData
 	apiKey      string
 	secretKey   []byte
 	destination cryptodotcom.Destination
@@ -69,11 +66,8 @@ func NewClient(apiKey, secretKey string, baseURL cryptodotcom.BaseURL, destinati
 		destination: destination,
 		Client:      httpClient,
 	}
-	//c.Account = NewAccount(c)
-	//c.Trade = NewTrade(c)
-	//c.Market = NewMarket(c)
+	c.Account = NewAccount(c)
 	c.PublicData = NewPublicData(c)
-	//c.TradeData = NewTradeData(c)
 	return c
 }
 
