@@ -4,7 +4,7 @@ import "github.com/drinkthere/cryptodotcom"
 
 type (
 	CreateOrder struct {
-		ID                string                 `json:"instrument_name"`
+		InstrumentName    string                 `json:"instrument_name"`
 		Side              cryptodotcom.OrderSide `json:"side"`
 		Type              cryptodotcom.OrderType `json:"type"`
 		Price             string                 `json:"price"`
