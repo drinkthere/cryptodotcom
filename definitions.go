@@ -15,6 +15,7 @@ type (
 	TimeInForce    string
 	OrderMode      string
 	OrderStatus    string
+	ChannelPrefix  string
 
 	ContractType  string
 	PositionType  string
@@ -94,6 +95,8 @@ const (
 	SpotOrderMode   = OrderMode("SPOT")
 	MarginOrderMode = OrderMode("MARGIN")
 
+	ChannelPrefixTicker = ChannelPrefix("ticker")
+	///////
 	ContractLinearType  = ContractType("linear")
 	ContractInverseType = ContractType("inverse")
 
@@ -114,6 +117,7 @@ const (
 	CountIncrease = CountAction("add")
 	CountDecrease = CountAction("reduce")
 
+	PongOperation             = Operation("pong")
 	LoginOperation            = Operation("login")
 	SubscribeOperation        = Operation("subscribe")
 	UnsubscribeOperation      = Operation("unsubscribe")
@@ -284,4 +288,12 @@ func S2M(i interface{}) map[string]interface{} {
 	_ = json.Unmarshal(j, &m)
 
 	return m
+}
+
+func FillChannelNames(prefix ChannelPrefix, contents []string) []string {
+	result := make([]string, len(contents))
+	for i := range contents {
+		result[i] = strings.Join([]string{string(prefix), contents[i]}, ".")
+	}
+	return result
 }
