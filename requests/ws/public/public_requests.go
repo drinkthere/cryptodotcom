@@ -8,7 +8,7 @@ type (
 	}
 
 	OrderBooks struct {
-		Instrument           []*Instrument
+		Instruments          []*Instrument
 		BookSubscriptionType cryptodotcom.BookSubscriptionType `json:"book_subscription_type"`
 		BookUpdateFrequency  cryptodotcom.BookUpdateFrequency  `json:"book_update_frequency"`
 	}

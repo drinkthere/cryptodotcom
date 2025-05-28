@@ -29,7 +29,7 @@ func (c *Public) Tickers(req requests.Tickers, ch chan *public.Tickers) error {
 
 func (c *Public) OrderBooks(req requests.OrderBooks, ch chan *public.OrderBooks) error {
 	c.obCh = ch
-	channelNames := fillOrderBookChannel(req.Instrument)
+	channelNames := fillOrderBookChannel(req.Instruments)
 	return c.Subscribe(false, channelNames)
 }
 
@@ -76,11 +76,11 @@ func fillTickerChannel(contents []string) []string {
 	return result
 }
 
-func fillOrderBookChannel(contents []*requests.OrderBook) []string {
+func fillOrderBookChannel(contents []*requests.Instrument) []string {
 	prefix := cryptodotcom.ChannelPrefixBook
 	result := make([]string, len(contents))
 	for i := range contents {
-		result[i] = strings.Join([]string{string(prefix), contents[i].InstID, contents[i].Depth}, ".")
+		result[i] = strings.Join([]string{string(prefix), contents[i].InstrumentName, contents[i].Depth}, ".")
 	}
 	return result
 }

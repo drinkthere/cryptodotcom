@@ -41,14 +41,15 @@ type (
 		Subscription   string                 `json:"subscription"`
 		Channel        string                 `json:"channel"`
 		Depth          cryptodotcom.JSONInt64 `json:"depth"`
-		Data           []*OrderBookWrapper    `json:"data"`
+		Data           []*OrderBook           `json:"data"`
 	}
-	OrderBookWrapper struct {
-		Asks              string                 `json:"asks"`
-		Bids              string                 `json:"asks"`
+	OrderBook struct {
+		Asks              []*OrderItem           `json:"asks"`
+		Bids              []*OrderItem           `json:"asks"`
 		PublishTime       cryptodotcom.JSONTime  `json:"t"`
 		LastUpdateTime    cryptodotcom.JSONTime  `json:"tt"`
 		UpdateSequence    cryptodotcom.JSONInt64 `json:"u"`
 		PreUpdateSequence cryptodotcom.JSONInt64 `json:"pu,omitempty"`
 	}
+	OrderItem []string
 )
