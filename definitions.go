@@ -69,6 +69,7 @@ const (
 
 	ChannelPrefixTicker = ChannelPrefix("ticker")
 	ChannelPrefixBook   = ChannelPrefix("book")
+	ChannelPrefixOrder  = ChannelPrefix("user.order")
 
 	PongOperation             = Operation("pong")
 	LoginOperation            = Operation("login")
@@ -84,9 +85,13 @@ const (
 	QuantityBaseCcy  = QuantityType("base_ccy")
 	QuantityQuoteCcy = QuantityType("quote_ccy")
 
-	OrderNew     = OrderStatus("NEW")
-	OrderPending = OrderStatus("PENDING")
-	OrderActive  = OrderStatus("ACTIVE")
+	OrderNew      = OrderStatus("NEW")
+	OrderPending  = OrderStatus("PENDING")
+	OrderReject   = OrderStatus("REJECTED")
+	OrderActive   = OrderStatus("ACTIVE")
+	OrderCanceled = OrderStatus("CANCELED")
+	OrderFilled   = OrderStatus("FILLED")
+	OrderExpired  = OrderStatus("EXPIRED")
 
 	BookSubscriptionTypeSNU = BookSubscriptionType("SNAPSHOT_AND_UPDATE")
 	BookSubscriptionTypeS   = BookSubscriptionType("SNAPSHOT")

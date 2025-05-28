@@ -3,17 +3,13 @@ package rest
 import (
 	"bytes"
 	"context"
-	"crypto/hmac"
-	"crypto/sha256"
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"github.com/drinkthere/cryptodotcom"
+	"github.com/drinkthere/cryptodotcom/utils"
 	"log"
-	"math/rand"
 	"net"
 	"net/http"
-	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -80,7 +76,7 @@ func (c *ClientRest) Do(httpMethod, method string, private bool, params map[stri
 		r   *http.Request
 		err error
 	)
-	reqID := GenerateRequestID()
+	reqID := utils.GenerateRequestID()
 	nonce := strconv.FormatInt(time.Now().UnixMilli(), 10)
 
 	if httpMethod == http.MethodGet {
@@ -117,7 +113,7 @@ func (c *ClientRest) Do(httpMethod, method string, private bool, params map[stri
 		bodyArr["nonce"] = nonce
 
 		if private {
-			sign := GenerateSignature(method, reqID, c.apiKey, nonce, c.secretKey, params)
+			sign := utils.GenerateSignature(method, reqID, c.apiKey, nonce, c.secretKey, params)
 			bodyArr["api_key"] = c.apiKey
 			bodyArr["sig"] = sign
 		}
@@ -135,49 +131,4 @@ func (c *ClientRest) Do(httpMethod, method string, private bool, params map[stri
 	}
 
 	return c.Client.Do(r)
-}
-
-func GenerateSignature(method, id, apiKey, nonce string, apiSecret []byte, params map[string]interface{}) string {
-	var keys []string
-	for k := range params {
-		keys = append(keys, k)
-	}
-	sort.Strings(keys)
-
-	var paramStrBuilder strings.Builder
-	for _, k := range keys {
-		paramStrBuilder.WriteString(k)
-
-		// Handle different parameter types
-		switch v := params[k].(type) {
-		case string:
-			paramStrBuilder.WriteString(v)
-		case []string:
-			for _, val := range v {
-				paramStrBuilder.WriteString(val)
-			}
-		case []interface{}:
-			for _, item := range v {
-				paramStrBuilder.WriteString(item.(string))
-			}
-		default:
-			// Fallback for other types
-			paramStrBuilder.WriteString(fmt.Sprintf("%v", v))
-		}
-	}
-	paramStr := paramStrBuilder.String()
-	signStr := method + id + apiKey + paramStr + nonce
-
-	mac := hmac.New(sha256.New, apiSecret)
-	mac.Write([]byte(signStr))
-	signature := mac.Sum(nil)
-
-	return hex.EncodeToString(signature)
-}
-
-func GenerateRequestID() string {
-	now := time.Now().UnixMilli()
-	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-	randPart := r.Int63n(1000) // 0~999
-	return strconv.FormatInt(now*1000+randPart, 10)
 }

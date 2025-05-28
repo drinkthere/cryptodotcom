@@ -2,13 +2,11 @@ package ws
 
 import (
 	"context"
-	"crypto/hmac"
-	"crypto/sha256"
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"github.com/drinkthere/cryptodotcom"
 	"github.com/drinkthere/cryptodotcom/events"
+	"github.com/drinkthere/cryptodotcom/utils"
 	"net"
 	"net/http"
 	"strconv"
@@ -37,8 +35,8 @@ type ClientWs struct {
 	lastTransmit  sync.Map
 	AuthRequested *time.Time
 	Authorized    bool
-	//Private       *Private
-	Public *Public
+	Private       *Private
+	Public        *Public
 	//Trade         *Trade
 	LocalIP string
 }
@@ -67,7 +65,7 @@ func NewClient(ctx context.Context, apiKey, secretKey string, url map[bool]crypt
 	}
 
 	c.Public = NewPublic(c)
-	//c.Private = NewPrivate(c)
+	c.Private = NewPrivate(c)
 	//c.Trade = NewTrade(c)
 	now := time.Now()
 	c.lastTransmit.Store(true, &now)
@@ -111,61 +109,40 @@ func (c *ClientWs) CheckConnect(p bool) bool {
 	return false
 }
 
-//
-//// Login
-////
-//// https://www.okx.com/docs-v5/en/#websocket-api-login
-//func (c *ClientWs) Login() error {
-//	if c.Authorized {
-//		return nil
-//	}
-//
-//	if c.AuthRequested != nil && time.Since(*c.AuthRequested).Seconds() < 30 {
-//		return nil
-//	}
-//
-//	now := time.Now()
-//	c.AuthRequested = &now
-//	method := http.MethodGet
-//	path := "/users/self/verify"
-//	ts, sign := c.sign(method, path)
-//	args := []map[string]string{
-//		{
-//			"apiKey":     c.apiKey,
-//			"passphrase": c.passphrase,
-//			"timestamp":  ts,
-//			"sign":       sign,
-//		},
-//	}
-//
-//	return c.Send(true, okx.LoginOperation, args)
-//}
+func (c *ClientWs) Login() error {
+	if c.Authorized {
+		return nil
+	}
+
+	if c.AuthRequested != nil && time.Since(*c.AuthRequested).Seconds() < 30 {
+		return nil
+	}
+	return c.Send(true, utils.GenerateRequestID(), cryptodotcom.LoginOperation, []string{})
+}
 
 func (c *ClientWs) Subscribe(p bool, ch []string) error {
-	nonce := strconv.FormatInt(time.Now().UnixMilli(), 10)
-	return c.Send(p, nonce, cryptodotcom.SubscribeOperation, ch)
+	return c.Send(p, utils.GenerateRequestID(), cryptodotcom.SubscribeOperation, ch)
 
 }
 
 func (c *ClientWs) Unsubscribe(p bool, ch []string) error {
-	nonce := strconv.FormatInt(time.Now().UnixMilli(), 10)
-	return c.Send(p, nonce, cryptodotcom.UnsubscribeOperation, ch)
+	return c.Send(p, utils.GenerateRequestID(), cryptodotcom.UnsubscribeOperation, ch)
 }
 
-func (c *ClientWs) Pong(p bool, nonce string) error {
-	return c.Send(p, nonce, cryptodotcom.PongOperation, []string{})
+func (c *ClientWs) Pong(p bool, reqID string) error {
+	return c.Send(p, reqID, cryptodotcom.PongOperation, []string{})
 }
 
 // Send message through either connections
-func (c *ClientWs) Send(p bool, nonce string, method cryptodotcom.Operation, channelNames []string) error {
+func (c *ClientWs) Send(p bool, reqID string, method cryptodotcom.Operation, channelNames []string) error {
 	if method != cryptodotcom.LoginOperation {
 		err := c.Connect(p)
 		if err == nil {
 			if p {
-				//err = c.WaitForAuthorization()
-				//if err != nil {
-				//	return err
-				//}
+				err = c.WaitForAuthorization()
+				if err != nil {
+					return err
+				}
 			}
 		} else {
 			return err
@@ -173,15 +150,26 @@ func (c *ClientWs) Send(p bool, nonce string, method cryptodotcom.Operation, cha
 	}
 
 	var data map[string]interface{}
-	if method == cryptodotcom.PongOperation {
-		// 单独处理pong消息
+	nonce := strconv.FormatInt(time.Now().UnixMilli(), 10)
+
+	switch method {
+	case cryptodotcom.PongOperation:
 		data = map[string]interface{}{
-			"id":     nonce,
+			"id":     reqID,
 			"method": "public/respond-heartbeat",
 		}
-	} else {
+	case cryptodotcom.LoginOperation:
+		sig := utils.GenerateSignature("public/auth", reqID, c.apiKey, nonce, c.secretKey, map[string]interface{}{})
 		data = map[string]interface{}{
-			"id":     nonce,
+			"id":      reqID,
+			"method":  "public/auth",
+			"api_key": c.apiKey,
+			"sig":     sig,
+			"nonce":   nonce,
+		}
+	default:
+		data = map[string]interface{}{
+			"id":     reqID,
 			"method": method,
 			"params": map[string][]string{
 				"channels": channelNames,
@@ -218,28 +206,27 @@ func (c *ClientWs) SetLoginChannel(lCh chan *events.Login) {
 	c.LoginChan = lCh
 }
 
-//
-//// WaitForAuthorization waits for the auth responses and try to log in if it was needed
-//func (c *ClientWs) WaitForAuthorization() error {
-//	if c.Authorized {
-//		return nil
-//	}
-//
-//	if err := c.Login(); err != nil {
-//		return err
-//	}
-//
-//	ticker := time.NewTicker(time.Millisecond * 300)
-//	defer ticker.Stop()
-//
-//	for range ticker.C {
-//		if c.Authorized {
-//			return nil
-//		}
-//	}
-//
-//	return nil
-//}
+// WaitForAuthorization waits for the auth responses and try to log in if it was needed
+func (c *ClientWs) WaitForAuthorization() error {
+	if c.Authorized {
+		return nil
+	}
+
+	if err := c.Login(); err != nil {
+		return err
+	}
+
+	ticker := time.NewTicker(time.Millisecond * 500)
+	defer ticker.Stop()
+
+	for range ticker.C {
+		if c.Authorized {
+			return nil
+		}
+	}
+
+	return nil
+}
 
 func (c *ClientWs) dial(p bool) error {
 	c.mu[p].Lock()
@@ -421,17 +408,6 @@ func (c *ClientWs) receiver(p bool) error {
 	}
 }
 
-func (c *ClientWs) sign(method, path string) (string, string) {
-	t := time.Now().UTC().Unix()
-	ts := fmt.Sprint(t)
-	s := ts + method + path
-	p := []byte(s)
-	h := hmac.New(sha256.New, c.secretKey)
-	h.Write(p)
-
-	return ts, base64.StdEncoding.EncodeToString(h.Sum(nil))
-}
-
 func (c *ClientWs) handleCancel(msg string) error {
 	go func() {
 		c.DoneChan <- msg
@@ -456,9 +432,9 @@ func (c *ClientWs) process(p bool, data []byte, e *events.Basic) bool {
 		return true
 
 	case "subscribe":
-		//if c.Private.Process(data, e) {
-		//	return true
-		//}
+		if c.Private.Process(data, e) {
+			return true
+		}
 
 		if c.Public.Process(data, e) {
 			return true
@@ -466,24 +442,24 @@ func (c *ClientWs) process(p bool, data []byte, e *events.Basic) bool {
 
 		return true
 
-		//case "login":
-		//	if time.Since(*c.AuthRequested).Seconds() > 30 {
-		//		c.AuthRequested = nil
-		//		_ = c.Login()
-		//		break
-		//	}
-		//
-		//	c.Authorized = true
-		//
-		//	e := events.Login{}
-		//	_ = json.Unmarshal(data, &e)
-		//	go func() {
-		//		if c.LoginChan != nil {
-		//			c.LoginChan <- &e
-		//		}
-		//	}()
-		//
-		//	return true
+	case "public/auth":
+		//if time.Since(*c.AuthRequested).Seconds() > 30 {
+		//	c.AuthRequested = nil
+		//	_ = c.Login()
+		//	break
+		//}
+
+		c.Authorized = true
+
+		e := events.Login{}
+		_ = json.Unmarshal(data, &e)
+		go func() {
+			if c.LoginChan != nil {
+				c.LoginChan <- &e
+			}
+		}()
+
+		return true
 	}
 
 	if e.Code != 0 {

@@ -6,10 +6,9 @@ import (
 
 type (
 	Basic struct {
-		ID      cryptodotcom.JSONInt64 `json:"id,omitempty"`
-		Code    cryptodotcom.JSONInt64 `json:"code"`
-		Method  string                 `json:"method"`
-		Message string                 `json:"message,omitempty"`
+		ID     cryptodotcom.JSONInt64 `json:"id,omitempty"`
+		Code   cryptodotcom.JSONInt64 `json:"code"`
+		Method string                 `json:"method"`
 	}
 
 	Tickers struct {

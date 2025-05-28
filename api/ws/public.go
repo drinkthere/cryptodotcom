@@ -67,11 +67,11 @@ func (c *Public) Process(data []byte, e *events.Basic) bool {
 	return false
 }
 
-func fillTickerChannel(contents []string) []string {
+func fillTickerChannel(instrumentNames []string) []string {
 	prefix := cryptodotcom.ChannelPrefixTicker
-	result := make([]string, len(contents))
-	for i := range contents {
-		result[i] = strings.Join([]string{string(prefix), contents[i]}, ".")
+	result := make([]string, len(instrumentNames))
+	for i := range instrumentNames {
+		result[i] = strings.Join([]string{string(prefix), instrumentNames[i]}, ".")
 	}
 	return result
 }
