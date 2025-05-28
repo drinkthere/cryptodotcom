@@ -2,12 +2,18 @@ package public
 
 import (
 	"github.com/drinkthere/cryptodotcom"
-	"github.com/drinkthere/cryptodotcom/events"
 )
 
 type (
+	Basic struct {
+		ID      cryptodotcom.JSONInt64 `json:"id,omitempty"`
+		Code    cryptodotcom.JSONInt64 `json:"code"`
+		Method  string                 `json:"method"`
+		Message string                 `json:"message,omitempty"`
+	}
+
 	Tickers struct {
-		events.Basic
+		Basic
 		Result TickerResult `json:"result"`
 	}
 	TickerResult struct {
@@ -33,7 +39,7 @@ type (
 	}
 
 	OrderBooks struct {
-		events.Basic
+		Basic
 		Result OrderBookResult `json:"result"`
 	}
 	OrderBookResult struct {
@@ -44,12 +50,16 @@ type (
 		Data           []*OrderBook           `json:"data"`
 	}
 	OrderBook struct {
-		Asks              []*OrderItem           `json:"asks"`
-		Bids              []*OrderItem           `json:"asks"`
+		Asks              []*OrderLevel          `json:"asks"`
+		Bids              []*OrderLevel          `json:"bids"`
 		PublishTime       cryptodotcom.JSONTime  `json:"t"`
 		LastUpdateTime    cryptodotcom.JSONTime  `json:"tt"`
 		UpdateSequence    cryptodotcom.JSONInt64 `json:"u"`
 		PreUpdateSequence cryptodotcom.JSONInt64 `json:"pu,omitempty"`
 	}
-	OrderItem []string
+	OrderLevel struct {
+		Price    string `json:"0"` // level price
+		Quantity string `json:"1"` // level quantity
+		Count    string `json:"2"` // level order count
+	}
 )
