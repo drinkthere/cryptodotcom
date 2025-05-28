@@ -19,7 +19,8 @@ func NewPublic(c *ClientWs) *Public {
 	return &Public{ClientWs: c}
 }
 
-func (c *Public) Tickers(req requests.Tickers) error {
+func (c *Public) Tickers(req requests.Tickers, ch chan *public.Tickers) error {
+	c.tCh = ch
 	channelNames := cryptodotcom.FillChannelNames(cryptodotcom.ChannelPrefixTicker, req.InstrumentNames)
 	return c.Subscribe(false, channelNames)
 }
