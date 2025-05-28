@@ -8,49 +8,21 @@ import (
 )
 
 type (
-	BaseURL        string
-	InstrumentType string
-	OrderType      string
-	ExecInst       string
-	TimeInForce    string
-	OrderMode      string
-	OrderStatus    string
-	ChannelPrefix  string
+	Destination          int
+	BaseURL              string
+	InstrumentType       string
+	OrderType            string
+	OrderSide            string
+	ExecInst             string
+	TimeInForce          string
+	OrderMode            string
+	OrderStatus          string
+	ChannelPrefix        string
+	Operation            string
+	BookSubscriptionType string
+	BookUpdateFrequency  string
 
-	ContractType  string
-	PositionType  string
-	PositionSide  string
-	ActualSide    string
-	TradeMode     string
-	CountAction   string
-	OrderSide     string
-	GreekType     string
-	BarSize       string
-	TradeSide     string
-	ChannelName   string
-	Operation     string
-	EventType     string
-	AlgoOrderType string
-	QuantityType  string
-	OrderFlowType string
-
-	ActionType           string
-	APIKeyAccess         string
-	OptionType           string
-	AliasType            string
-	InstrumentState      string
-	DeliveryExerciseType string
-	CandleStickWsBarSize string
-
-	Destination           int
-	FeeCategory           uint16
-	TransferType          uint16
-	AccountType           uint16
-	DepositState          uint16
-	WithdrawalDestination uint16
-	WithdrawalState       int8
-
-	ConvertType uint16
+	QuantityType string
 
 	JSONFloat64 float64
 	JSONInt64   int64
@@ -96,26 +68,7 @@ const (
 	MarginOrderMode = OrderMode("MARGIN")
 
 	ChannelPrefixTicker = ChannelPrefix("ticker")
-	///////
-	ContractLinearType  = ContractType("linear")
-	ContractInverseType = ContractType("inverse")
-
-	PositionLongShortMode = PositionType("long_short_mode")
-	PositionNetMode       = PositionType("net_mode")
-
-	PositionLongSide  = PositionSide("long")
-	PositionShortSide = PositionSide("short")
-	PositionNetSide   = PositionSide("net")
-
-	TpSide = ActualSide("tp")
-	SlSide = ActualSide("sl")
-
-	TradeCrossMode    = TradeMode("cross")
-	TradeIsolatedMode = TradeMode("isolated")
-	TradeCashMode     = TradeMode("cash")
-
-	CountIncrease = CountAction("add")
-	CountDecrease = CountAction("reduce")
+	ChannelPrefixBook   = ChannelPrefix("book")
 
 	PongOperation             = Operation("pong")
 	LoginOperation            = Operation("login")
@@ -128,43 +81,19 @@ const (
 	AmendOrderOperation       = Operation("amend-order")
 	BatchAmendOrderOperation  = Operation("batch-amend-orders")
 
-	// OrderFOK is Fill-or-kill order
-	OrderFOK = OrderType("fok")
-	// OrderIOC is Immediate-or-cancel order
-	OrderIOC = OrderType("ioc")
-	// OrderOptimalLimitIoc is Market order with immediate-or-cancel order
-	OrderOptimalLimitIoc = OrderType("optimal_limit_ioc")
-	// OrderMMP is Market Maker Protection (only applicable to Option in Portfolio Margin mode)
-	OrderMMP = OrderType("mmp")
-	// OrderMMPPostOnly is Market Maker Protection and Post-only order
-	// (only applicable to Option in Portfolio Margin mode)
-	OrderMMPPostOnly = OrderType("mmp_and_post_only")
-	// OrderOPFOK is Simple options (fok)
-	OrderOPFOK = OrderType("op_fok")
-
-	// AlgoOrderConditional is One-way stop order
-	AlgoOrderConditional = AlgoOrderType("conditional")
-	// AlgoOrderOCO is One-cancels-the-other order
-	AlgoOrderOCO      = AlgoOrderType("oco")
-	AlgoOrderTrigger  = AlgoOrderType("trigger")
-	AlgoOrderIceberg  = AlgoOrderType("iceberg")
-	AlgoOrderTwap     = AlgoOrderType("twap")
-	AlgoOrderTrailing = AlgoOrderType("move_order_stop")
-
 	QuantityBaseCcy  = QuantityType("base_ccy")
 	QuantityQuoteCcy = QuantityType("quote_ccy")
-
-	OrderTakerFlow = OrderFlowType("T")
-	OrderMakerFlow = OrderFlowType("M")
-
-	ClassA = FeeCategory(1)
-	ClassB = FeeCategory(2)
-	ClassC = FeeCategory(3)
-	ClassD = FeeCategory(4)
 
 	OrderNew     = OrderStatus("NEW")
 	OrderPending = OrderStatus("PENDING")
 	OrderActive  = OrderStatus("ACTIVE")
+
+	BookSubscriptionTypeSNU = BookSubscriptionType("SNAPSHOT_AND_UPDATE")
+	BookSubscriptionTypeS   = BookSubscriptionType("SNAPSHOT")
+
+	BookUpdateFrequency10  = BookUpdateFrequency("10")
+	BookUpdateFrequency100 = BookUpdateFrequency("100")
+	BookUpdateFrequency500 = BookUpdateFrequency("500")
 
 	//OrderCancel = OrderState("canceled")
 	//OrderPause  = OrderState("pause")
@@ -173,18 +102,6 @@ const (
 	//OrderUnfilled        = OrderState("unfilled")
 	//OrderEffective       = OrderState("effective")
 	//OrderFailed          = OrderState("order_failed")
-
-	TransferWithinAccount     = TransferType(0)
-	MasterAccountToSubAccount = TransferType(1)
-	MasterSubAccountToAccount = TransferType(2)
-
-	SpotAccount    = AccountType(1)
-	FuturesAccount = AccountType(3)
-	MarginAccount  = AccountType(5)
-	FundingAccount = AccountType(6)
-	SwapAccount    = AccountType(9)
-	OptionsAccount = AccountType(12)
-	UnifiedAccount = AccountType(18)
 )
 
 func (t JSONTime) String() string { return time.Time(t).String() }
@@ -228,59 +145,6 @@ func (t *JSONInt64) UnmarshalJSON(s []byte) (err error) {
 	*(*int64)(t) = q
 	return
 }
-func (t *WithdrawalState) UnmarshalJSON(s []byte) (err error) {
-	r := strings.Replace(string(s), `"`, ``, -1)
-	if r == "" {
-		return
-	}
-
-	q, err := strconv.ParseInt(r, 10, 8)
-	if err != nil {
-		return err
-	}
-	*(*int8)(t) = int8(q)
-	return
-}
-
-func (t *FeeCategory) UnmarshalJSON(s []byte) (err error) {
-	r := strings.Replace(string(s), `"`, ``, -1)
-	if r == "" {
-		return
-	}
-
-	q, err := strconv.ParseUint(r, 10, 16)
-	if err != nil {
-		return err
-	}
-	*(*uint16)(t) = uint16(q)
-	return
-}
-func (t *AccountType) UnmarshalJSON(s []byte) (err error) {
-	r := strings.Replace(string(s), `"`, ``, -1)
-	if r == "" {
-		return
-	}
-
-	q, err := strconv.ParseUint(r, 10, 16)
-	if err != nil {
-		return err
-	}
-	*(*uint16)(t) = uint16(q)
-	return
-}
-func (t *DepositState) UnmarshalJSON(s []byte) (err error) {
-	r := strings.Replace(string(s), `"`, ``, -1)
-	if r == "" {
-		return
-	}
-
-	q, err := strconv.ParseUint(r, 10, 16)
-	if err != nil {
-		return err
-	}
-	*(*uint16)(t) = uint16(q)
-	return
-}
 
 func S2M(i interface{}) map[string]interface{} {
 	m := make(map[string]interface{})
@@ -288,12 +152,4 @@ func S2M(i interface{}) map[string]interface{} {
 	_ = json.Unmarshal(j, &m)
 
 	return m
-}
-
-func FillChannelNames(prefix ChannelPrefix, contents []string) []string {
-	result := make([]string, len(contents))
-	for i := range contents {
-		result[i] = strings.Join([]string{string(prefix), contents[i]}, ".")
-	}
-	return result
 }

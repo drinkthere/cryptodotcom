@@ -32,9 +32,23 @@ type (
 		UpdateTime     cryptodotcom.JSONTime `json:"t"`
 	}
 
-	//OrderBook struct {
-	//	Arg    *events.Argument      `json:"arg"`
-	//	Action string                `json:"action"`
-	//	Books  []*market.OrderBookWs `json:"data"`
-	//}
+	OrderBooks struct {
+		events.Basic
+		Result TickerResult `json:"result"`
+	}
+	OrderBookResult struct {
+		InstrumentName string                 `json:"instrument_name"`
+		Subscription   string                 `json:"subscription"`
+		Channel        string                 `json:"channel"`
+		Depth          cryptodotcom.JSONInt64 `json:"depth"`
+		Data           []*OrderBookWrapper    `json:"data"`
+	}
+	OrderBookWrapper struct {
+		Asks              string                 `json:"asks"`
+		Bids              string                 `json:"asks"`
+		PublishTime       cryptodotcom.JSONTime  `json:"t"`
+		LastUpdateTime    cryptodotcom.JSONTime  `json:"tt"`
+		UpdateSequence    cryptodotcom.JSONInt64 `json:"u"`
+		PreUpdateSequence cryptodotcom.JSONInt64 `json:"pu,omitempty"`
+	}
 )

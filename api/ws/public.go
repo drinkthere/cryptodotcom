@@ -2,16 +2,18 @@ package ws
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/drinkthere/cryptodotcom"
 	"github.com/drinkthere/cryptodotcom/events"
 	"github.com/drinkthere/cryptodotcom/events/public"
 	requests "github.com/drinkthere/cryptodotcom/requests/ws/public"
+	"strings"
 )
 
 type Public struct {
 	*ClientWs
-	tCh chan *public.Tickers
-	//obCh chan *public.OrderBook
+	tCh  chan *public.Tickers
+	obCh chan *public.OrderBooks
 }
 
 // NewPublic returns a pointer to a fresh Public
@@ -21,18 +23,15 @@ func NewPublic(c *ClientWs) *Public {
 
 func (c *Public) Tickers(req requests.Tickers, ch chan *public.Tickers) error {
 	c.tCh = ch
-	channelNames := cryptodotcom.FillChannelNames(cryptodotcom.ChannelPrefixTicker, req.InstrumentNames)
+	channelNames := fillTickerChannel(req.InstrumentNames)
 	return c.Subscribe(false, channelNames)
 }
 
-//
-//func (c *Public) OrderBook(req requests.OrderBook, ch ...chan *public.OrderBook) error {
-//	m := okx.S2M(req)
-//	if len(ch) > 0 {
-//		c.obCh = ch[0]
-//	}
-//	return c.Subscribe(false, []okx.ChannelName{}, m)
-//}
+func (c *Public) OrderBooks(req requests.OrderBooks, ch chan *public.OrderBooks) error {
+	c.obCh = ch
+	channelNames := fillOrderBookChannel(req.Instrument)
+	return c.Subscribe(false, channelNames)
+}
 
 func (c *Public) Process(data []byte, e *events.Basic) bool {
 	if e.Code == 0 && e.Result != nil && len(data) > 0 {
@@ -51,19 +50,37 @@ func (c *Public) Process(data []byte, e *events.Basic) bool {
 				}
 			}()
 			return true
-		//case "book":
-		//	e := public.OrderBook{}
-		//	err := json.Unmarshal(data, &e)
-		//	if err != nil {
-		//		fmt.Println(err.Error())
-		//		return false
-		//	}
-		//	if c.obCh != nil {
-		//		c.obCh <- &e
-		//	}
-		//	return true
+		case "book":
+			e := public.OrderBooks{}
+			err := json.Unmarshal(data, &e)
+			if err != nil {
+				fmt.Println(err.Error())
+				return false
+			}
+			if c.obCh != nil {
+				c.obCh <- &e
+			}
+			return true
 		default:
 		}
 	}
 	return false
+}
+
+func fillTickerChannel(contents []string) []string {
+	prefix := cryptodotcom.ChannelPrefixTicker
+	result := make([]string, len(contents))
+	for i := range contents {
+		result[i] = strings.Join([]string{string(prefix), contents[i]}, ".")
+	}
+	return result
+}
+
+func fillOrderBookChannel(contents []*requests.OrderBook) []string {
+	prefix := cryptodotcom.ChannelPrefixBook
+	result := make([]string, len(contents))
+	for i := range contents {
+		result[i] = strings.Join([]string{string(prefix), contents[i].InstID, contents[i].Depth}, ".")
+	}
+	return result
 }
