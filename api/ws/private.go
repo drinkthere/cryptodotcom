@@ -103,57 +103,61 @@ func (c *Private) Order(req requests.Order, ch chan *private.Order) error {
 }
 
 func (c *Private) Process(data []byte, e *events.Basic) bool {
-	if e.Code == 0 && e.Result != nil && len(data) > 0 {
-		ch := e.Result.Channel
-		switch ch {
-		//case "account":
-		//	e := private.Account{}
-		//	err := json.Unmarshal(data, &e)
-		//	if err != nil {
-		//		return false
-		//	}
-		//	go func() {
-		//		if c.aCh != nil {
-		//			c.aCh <- &e
-		//		}
-		//	}()
-		//	return true
-		//case "positions":
-		//	e := private.Position{}
-		//	err := json.Unmarshal(data, &e)
-		//	if err != nil {
-		//		return false
-		//	}
-		//	go func() {
-		//		if c.pCh != nil {
-		//			c.pCh <- &e
-		//		}
-		//	}()
-		//	return true
-		//case "balance_and_position":
-		//	e := private.BalanceAndPosition{}
-		//	err := json.Unmarshal(data, &e)
-		//	if err != nil {
-		//		return false
-		//	}
-		//	go func() {
-		//		if c.bnpCh != nil {
-		//			c.bnpCh <- &e
-		//		}
-		//	}()
-		//	return true
-		case "orders":
-			e := private.Order{}
-			err := json.Unmarshal(data, &e)
-			if err != nil {
-				return false
-			}
-			go func() {
-				if c.oCh != nil {
-					c.oCh <- &e
+	if e.Code == 0 {
+		if e.Result != nil {
+			ch := e.Result.Channel
+			if strings.HasPrefix(ch, "user.order") {
+				e := private.Order{}
+				err := json.Unmarshal(data, &e)
+				if err != nil {
+					return false
 				}
-			}()
-			return true
+				if len(e.Result.Data) > 0 {
+					go func() {
+						if c.oCh != nil {
+							c.oCh <- &e
+						}
+					}()
+				}
+				return true
+			}
+
+			//case "account":
+			//	e := private.Account{}
+			//	err := json.Unmarshal(data, &e)
+			//	if err != nil {
+			//		return false
+			//	}
+			//	go func() {
+			//		if c.aCh != nil {
+			//			c.aCh <- &e
+			//		}
+			//	}()
+			//	return true
+			//case "positions":
+			//	e := private.Position{}
+			//	err := json.Unmarshal(data, &e)
+			//	if err != nil {
+			//		return false
+			//	}
+			//	go func() {
+			//		if c.pCh != nil {
+			//			c.pCh <- &e
+			//		}
+			//	}()
+			//	return true
+			//case "balance_and_position":
+			//	e := private.BalanceAndPosition{}
+			//	err := json.Unmarshal(data, &e)
+			//	if err != nil {
+			//		return false
+			//	}
+			//	go func() {
+			//		if c.bnpCh != nil {
+			//			c.bnpCh <- &e
+			//		}
+			//	}()
+			//	return true
 		}
 	}
 	return false

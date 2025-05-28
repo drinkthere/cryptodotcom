@@ -32,7 +32,6 @@ type ClientWs struct {
 	LoginChan     chan *events.Login
 	SuccessChan   chan *events.Basic
 	sendChan      map[bool]chan []byte
-	lastTransmit  sync.Map
 	AuthRequested *time.Time
 	Authorized    bool
 	Private       *Private
@@ -67,9 +66,6 @@ func NewClient(ctx context.Context, apiKey, secretKey string, url map[bool]crypt
 	c.Public = NewPublic(c)
 	c.Private = NewPrivate(c)
 	//c.Trade = NewTrade(c)
-	now := time.Now()
-	c.lastTransmit.Store(true, &now)
-	c.lastTransmit.Store(false, &now)
 	return c
 }
 
@@ -135,17 +131,20 @@ func (c *ClientWs) Pong(p bool, reqID string) error {
 
 // Send message through either connections
 func (c *ClientWs) Send(p bool, reqID string, method cryptodotcom.Operation, channelNames []string) error {
+	// Crypto.com recommend adding a 1-second sleep after establishing the websocket connection, and before requests are sent.
+	// This will avoid occurrences of rate-limit (`TOO_MANY_REQUESTS`) errors, as the websocket rate limits are pro-rated based on the calendar-second that the websocket connection was opened.
+
+	// so we do not connect automatically here
+	if !c.CheckConnect(p) {
+		return fmt.Errorf("connection is not established %t", p)
+	}
+
 	if method != cryptodotcom.LoginOperation {
-		err := c.Connect(p)
-		if err == nil {
-			if p {
-				err = c.WaitForAuthorization()
-				if err != nil {
-					return err
-				}
+		if p {
+			err := c.WaitForAuthorization()
+			if err != nil {
+				return err
 			}
-		} else {
-			return err
 		}
 	}
 
@@ -259,7 +258,7 @@ func (c *ClientWs) dial(p bool) error {
 		if res != nil {
 			statusCode = res.StatusCode
 		}
-
+		fmt.Printf("Failed to dial WebSocket connection (p=%v), status code: %d, error: %v", p, statusCode, err)
 		c.mu[p].Unlock()
 
 		return fmt.Errorf("error %d: %w", statusCode, err)
@@ -319,9 +318,6 @@ func (c *ClientWs) dial(p bool) error {
 }
 
 func (c *ClientWs) sender(p bool) error {
-	ticker := time.NewTicker(time.Millisecond * 300)
-	defer ticker.Stop()
-
 	for {
 		c.mu[p].RLock()
 		dataChan := c.sendChan[p]
@@ -352,19 +348,6 @@ func (c *ClientWs) sender(p bool) error {
 			if err := w.Close(); err != nil {
 				return fmt.Errorf("failed to close ws connection, error: %w", err)
 			}
-		case <-ticker.C:
-			lastTransmitInterface, _ := c.lastTransmit.Load(p)
-			lastTransmit := lastTransmitInterface.(*time.Time)
-			c.mu[p].RLock()
-			if c.conn[p] != nil && (lastTransmit == nil || (lastTransmit != nil && time.Since(*lastTransmit) > PingPeriod)) {
-				go func() {
-					c.mu[p].RLock()
-					c.sendChan[p] <- []byte("ping")
-					c.mu[p].RUnlock()
-				}()
-			}
-
-			c.mu[p].RUnlock()
 		case <-c.ctx.Done():
 			return c.handleCancel("sender")
 		}
@@ -393,9 +376,6 @@ func (c *ClientWs) receiver(p bool) error {
 				return fmt.Errorf("failed to read message from ws connection, error: %v\n", err)
 			}
 			c.mu[p].RUnlock()
-
-			now := time.Now()
-			c.lastTransmit.Store(p, &now)
 
 			if mt == websocket.TextMessage {
 				e := &events.Basic{}
@@ -432,23 +412,13 @@ func (c *ClientWs) process(p bool, data []byte, e *events.Basic) bool {
 		return true
 
 	case "subscribe":
-		if c.Private.Process(data, e) {
-			return true
+		if p {
+			return c.Private.Process(data, e)
+		} else {
+			return c.Public.Process(data, e)
 		}
-
-		if c.Public.Process(data, e) {
-			return true
-		}
-
-		return true
 
 	case "public/auth":
-		//if time.Since(*c.AuthRequested).Seconds() > 30 {
-		//	c.AuthRequested = nil
-		//	_ = c.Login()
-		//	break
-		//}
-
 		c.Authorized = true
 
 		e := events.Login{}
