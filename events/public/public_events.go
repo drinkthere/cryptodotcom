@@ -34,7 +34,7 @@ type (
 
 	OrderBooks struct {
 		events.Basic
-		Result TickerResult `json:"result"`
+		Result OrderBookResult `json:"result"`
 	}
 	OrderBookResult struct {
 		InstrumentName string                 `json:"instrument_name"`
