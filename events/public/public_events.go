@@ -50,16 +50,11 @@ type (
 		Data           []*OrderBook           `json:"data"`
 	}
 	OrderBook struct {
-		Asks              []*OrderLevel          `json:"asks"`
-		Bids              []*OrderLevel          `json:"bids"`
+		Asks              [][]string             `json:"asks"`
+		Bids              [][]string             `json:"bids"`
 		PublishTime       cryptodotcom.JSONTime  `json:"t"`
 		LastUpdateTime    cryptodotcom.JSONTime  `json:"tt"`
 		UpdateSequence    cryptodotcom.JSONInt64 `json:"u"`
 		PreUpdateSequence cryptodotcom.JSONInt64 `json:"pu,omitempty"`
-	}
-	OrderLevel struct {
-		Price    string `json:"0"` // level price
-		Quantity string `json:"1"` // level quantity
-		Count    string `json:"2"` // level order count
 	}
 )
