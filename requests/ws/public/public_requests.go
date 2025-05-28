@@ -13,7 +13,7 @@ type (
 		BookUpdateFrequency  cryptodotcom.BookUpdateFrequency  `json:"book_update_frequency"`
 	}
 	Instrument struct {
-		InstID string `json:"instId"`
-		Depth  string `json:"channel"`
+		InstrumentName string `json:"instrument_name"`
+		Depth          string `json:"depth"`
 	}
 )
