@@ -60,5 +60,19 @@ func (c *Trade) CancelOrder(req requests.CancelOrder) (response responses.Cancel
 	return
 }
 
-// @todo
-// CancelAllOrders
+func (c *Trade) CancelAllOrders(req requests.CancelAllOrders) (response responses.CancelAllOrders, err error) {
+	var p string
+	var res *http.Response
+
+	p = "private/cancel-all-orders"
+	m := cryptodotcom.S2M(req)
+	res, err = c.client.Do(http.MethodPost, p, true, m)
+
+	if err != nil {
+		return
+	}
+	defer res.Body.Close()
+	d := json.NewDecoder(res.Body)
+	err = d.Decode(&response)
+	return
+}

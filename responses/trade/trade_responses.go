@@ -23,4 +23,8 @@ type (
 		responses.Basic
 		Result *trade.HandleOrderResult `json:"result"`
 	}
+
+	CancelAllOrders struct {
+		responses.Basic
+	}
 )

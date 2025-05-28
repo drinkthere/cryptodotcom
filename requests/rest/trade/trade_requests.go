@@ -25,4 +25,9 @@ type (
 		OrderID       string `json:"order_id,omitempty"`
 		ClientOrderID string `json:"client_oid,omitempty"`
 	}
+
+	CancelAllOrders struct {
+		OrderID string `json:"instrument_name,omitempty"` // BTCUSD-PERP
+		Type    string `json:"type,omitempty"`            // LIMIT, TRIGGER, ALL
+	}
 )
