@@ -80,7 +80,7 @@ type (
 		InstrumentName       string `json:"instrument_name"`
 		Quantity             string `json:"quantity"`
 		MarketValue          string `json:"market_value"`
-		CollateralEligible   string `json:"collateral_eligible"`
+		CollateralEligible   bool   `json:"collateral_eligible"`
 		Haircut              string `json:"haircut"`
 		CollateralAmount     string `json:"collateral_amount"`
 		MaxWithdrawalBalance string `json:"max_withdrawal_balance"`
