@@ -8,7 +8,7 @@ import (
 type (
 	Tickers struct {
 		events.Basic
-		result TickerResult `json:"data"`
+		Result TickerResult `json:"result"`
 	}
 	TickerResult struct {
 		InstrumentName string    `json:"instrument_name"`
@@ -16,7 +16,6 @@ type (
 		Channel        string    `json:"channel"`
 		Data           []*Ticker `json:"data"`
 	}
-
 	Ticker struct {
 		HighPx         string                `json:"h"`
 		LowPx          string                `json:"l"`
