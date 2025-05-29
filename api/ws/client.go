@@ -37,8 +37,7 @@ type ClientWs struct {
 	Authorized    bool
 	Private       *Private
 	Public        *Public
-	//Trade         *Trade
-	LocalIP string
+	LocalIP       string
 }
 
 const (
