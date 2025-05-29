@@ -14,9 +14,9 @@ import (
 // https://www.okx.com/docs-v5/en/#websocket-api-private-channel
 type Private struct {
 	*ClientWs
-	oCh chan *private.Order
-	bCh chan *private.Balance
-	//pCh   chan *private.Position
+	oCh chan *private.Orders
+	bCh chan *private.Balances
+	pCh chan *private.Positions
 	//bnpCh chan *private.BalanceAndPosition
 	//tCh   chan *private.Trade
 }
@@ -26,15 +26,21 @@ func NewPrivate(c *ClientWs) *Private {
 	return &Private{ClientWs: c}
 }
 
-func (c *Private) Order(req requests.Order, ch chan *private.Order) error {
+func (c *Private) Orders(req requests.Orders, ch chan *private.Orders) error {
 	c.oCh = ch
 	channelNames := fillOrderChannel(req.InstrumentNames)
 	return c.Subscribe(true, channelNames)
 }
 
-func (c *Private) Balance(ch chan *private.Balance) error {
+func (c *Private) Balances(ch chan *private.Balances) error {
 	c.bCh = ch
 	channelNames := []string{"user.balance"}
+	return c.Subscribe(true, channelNames)
+}
+
+func (c *Private) Positions(ch chan *private.Positions) error {
+	c.pCh = ch
+	channelNames := []string{"user.positions"}
 	return c.Subscribe(true, channelNames)
 }
 
@@ -42,8 +48,9 @@ func (c *Private) Process(data []byte, e *events.Basic) bool {
 	if e.Code == 0 {
 		if e.Result != nil {
 			ch := e.Result.Channel
+			// why not use switch, because order channel includes "user.order and use.order.INSRUMENT_NAME" which need to compare the prefix
 			if ch == "user.balance" {
-				e := private.Balance{}
+				e := private.Balances{}
 				err := json.Unmarshal(data, &e)
 				if err != nil {
 					return false
@@ -56,8 +63,22 @@ func (c *Private) Process(data []byte, e *events.Basic) bool {
 					}()
 				}
 				return true
+			} else if ch == "user.positions" {
+				e := private.Positions{}
+				err := json.Unmarshal(data, &e)
+				if err != nil {
+					return false
+				}
+				if len(e.Result.Data) > 0 {
+					go func() {
+						if c.pCh != nil {
+							c.pCh <- &e
+						}
+					}()
+				}
+				return true
 			} else if strings.HasPrefix(ch, "user.order") {
-				e := private.Order{}
+				e := private.Orders{}
 				err := json.Unmarshal(data, &e)
 				if err != nil {
 					return false

@@ -1,7 +1,7 @@
 package private
 
 type (
-	Order struct {
+	Orders struct {
 		InstrumentNames []string
 	}
 )

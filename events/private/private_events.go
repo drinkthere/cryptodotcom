@@ -11,7 +11,7 @@ type (
 		Method string                 `json:"method"`
 	}
 
-	Order struct {
+	Orders struct {
 		Basic
 		Result OrderResult `json:"result"`
 	}
@@ -48,7 +48,7 @@ type (
 		UpdateTime         cryptodotcom.JSONTime    `json:"update_time"`
 	}
 
-	Balance struct {
+	Balances struct {
 		Basic
 		Result BalanceResult `json:"result"`
 	}
@@ -85,5 +85,32 @@ type (
 		CollateralAmount     string `json:"collateral_amount"`
 		MaxWithdrawalBalance string `json:"max_withdrawal_balance"`
 		ReservedQty          string `json:"reserved_qty"`
+	}
+
+	Positions struct {
+		Basic
+		Result PositionResult `json:"result"`
+	}
+	PositionResult struct {
+		Subscription string            `json:"subscription"`
+		Channel      string            `json:"channel"`
+		Data         []*PositionDetail `json:"data"`
+	}
+	PositionDetail struct {
+		AccountId            string `json:"account_id"`
+		Quantity             string `json:"quantity"`
+		SessionUnrealizedPnl string `json:"session_unrealized_pnl"`
+		Cost                 string `json:"cost"`
+		OpenPositionPnl      string `json:"open_position_pnl"`
+		OpenPosCost          string `json:"open_pos_cost"`
+		SessionPnl           string `json:"session_pnl"`
+		PosInitialMargin     string `json:"pos_initial_margin"`
+		PosMaintenanceMargin string `json:"pos_maintenance_margin"`
+		MarketValue          string `json:"market_value"`
+		MarkPrice            string `json:"mark_price"`
+		TargetLeverage       string `json:"target_leverage"`
+		UpdateTimestampMs    int64  `json:"update_timestamp_ms"`
+		InstrumentName       string `json:"instrument_name"`
+		Type                 string `json:"type"`
 	}
 )
