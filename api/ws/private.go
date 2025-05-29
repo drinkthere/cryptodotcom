@@ -71,7 +71,7 @@ func (c *Private) CancelOrder(req requests.CancelOrder) error {
 	return c.Send(true, utils.GenerateRequestID(), cryptodotcom.CancelOrderOperation, args)
 }
 
-func (c *Private) CancelAllOrder(req requests.CancelAllOrders) error {
+func (c *Private) CancelAllOrders(req requests.CancelAllOrders) error {
 	if c.TradeChan == nil {
 		return fmt.Errorf("trade channel has not been initialized")
 	}
