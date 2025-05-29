@@ -17,7 +17,7 @@ type Private struct {
 	oCh   chan *private.Orders
 	bCh   chan *private.Balances
 	pCh   chan *private.Positions
-	bnpCh chan *private.BalanceAndPosition
+	bnpCh chan *private.PositionAndBalance
 	//tCh   chan *private.Trade
 }
 
@@ -44,7 +44,7 @@ func (c *Private) Positions(ch chan *private.Positions) error {
 	return c.Subscribe(true, channelNames)
 }
 
-func (c *Private) PositionAndBalance(ch chan *private.BalanceAndPosition) error {
+func (c *Private) PositionAndBalance(ch chan *private.PositionAndBalance) error {
 	c.bnpCh = ch
 	channelNames := []string{"user.position_balance"}
 	return c.Subscribe(true, channelNames)
@@ -84,7 +84,7 @@ func (c *Private) Process(data []byte, e *events.Basic) bool {
 				}
 				return true
 			} else if ch == "user.position_balance" {
-				e := private.BalanceAndPosition{}
+				e := private.PositionAndBalance{}
 				err := json.Unmarshal(data, &e)
 				if err != nil {
 					return false

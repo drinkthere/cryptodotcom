@@ -114,18 +114,18 @@ type (
 		Type                 string                 `json:"type"`
 	}
 
-	BalanceAndPosition struct {
+	PositionAndBalance struct {
 		Basic
-		Result BalanceAndPositionResult `json:"result"`
+		Result PositionAndBalanceResult `json:"result"`
 	}
 
-	BalanceAndPositionResult struct {
+	PositionAndBalanceResult struct {
 		Subscription string                      `json:"subscription"`
 		Channel      string                      `json:"channel"`
-		Data         []*BalanceAndPositionDetail `json:"data"`
+		Data         []*PositionAndBalanceDetail `json:"data"`
 	}
 
-	BalanceAndPositionDetail struct {
+	PositionAndBalanceDetail struct {
 		Balances  []*Bal `json:"balances"`
 		Positions []*Pos `json:"positions"`
 	}
