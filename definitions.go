@@ -75,10 +75,9 @@ const (
 	LoginOperation          = Operation("login")
 	SubscribeOperation      = Operation("subscribe")
 	UnsubscribeOperation    = Operation("unsubscribe")
-	OrderOperation          = Operation("order")
 	CreateOrderOperation    = Operation("private/create-order")
-	CancelOrderOperation    = Operation("cancel-order")
-	CancelAllOrderOperation = Operation("cancel-all-orders")
+	CancelOrderOperation    = Operation("private/cancel-order")
+	CancelAllOrderOperation = Operation("private/cancel-all-orders")
 
 	QuantityBaseCcy  = QuantityType("base_ccy")
 	QuantityQuoteCcy = QuantityType("quote_ccy")

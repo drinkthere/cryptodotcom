@@ -24,11 +24,6 @@ type (
 		Method  string                 `json:"method"`
 		Message string                 `json:"message,omitempty"`
 	}
-
-	HandleOrderResult struct {
-		OrderID       string `json:"order_id"`
-		ClientOrderID string `json:"client_oid"`
-	}
 )
 
 //

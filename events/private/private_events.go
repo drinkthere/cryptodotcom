@@ -146,4 +146,14 @@ type (
 		UpdateTimestampMs cryptodotcom.JSONInt64 `json:"update_timestamp_ms"`
 		OpenPosCost       string                 `json:"open_pos_cost"`
 	}
+
+	HandleOrderResult struct {
+		Basic
+		Message string         `json:"message,omitempty"`
+		Result  HandleOrderIDs `json:"result,omitempty"`
+	}
+	HandleOrderIDs struct {
+		OrderID       string `json:"order_id"`
+		ClientOrderID string `json:"client_oid"`
+	}
 )

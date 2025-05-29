@@ -51,14 +51,34 @@ func (c *Private) PositionAndBalance(ch chan *private.PositionAndBalance) error 
 	return c.Subscribe(true, channelNames)
 }
 
-func (c *Private) CreateOrder(order requests.CreateOrder) error {
+func (c *Private) CreateOrder(req requests.CreateOrder) error {
 	if c.TradeChan == nil {
 		return fmt.Errorf("trade channel has not been initialized")
 	}
 	args := map[string]interface{}{
-		"createOrder": order,
+		"createOrder": req,
 	}
 	return c.Send(true, utils.GenerateRequestID(), cryptodotcom.CreateOrderOperation, args)
+}
+
+func (c *Private) CancelOrder(req requests.CancelOrder) error {
+	if c.TradeChan == nil {
+		return fmt.Errorf("trade channel has not been initialized")
+	}
+	args := map[string]interface{}{
+		"cancelOrder": req,
+	}
+	return c.Send(true, utils.GenerateRequestID(), cryptodotcom.CancelOrderOperation, args)
+}
+
+func (c *Private) CancelAllOrder(req requests.CancelAllOrders) error {
+	if c.TradeChan == nil {
+		return fmt.Errorf("trade channel has not been initialized")
+	}
+	args := map[string]interface{}{
+		"cancelAllOrders": req,
+	}
+	return c.Send(true, utils.GenerateRequestID(), cryptodotcom.CancelAllOrderOperation, args)
 }
 
 func (c *Private) Process(data []byte, e *events.Basic) bool {

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/drinkthere/cryptodotcom"
 	"github.com/drinkthere/cryptodotcom/events"
+	"github.com/drinkthere/cryptodotcom/events/private"
 	requests "github.com/drinkthere/cryptodotcom/requests/ws/private"
 	"github.com/drinkthere/cryptodotcom/utils"
 	"github.com/gorilla/websocket"
@@ -30,7 +31,7 @@ type ClientWs struct {
 	ErrChan       chan *events.Basic
 	LoginChan     chan *events.Login
 	SuccessChan   chan *events.Basic
-	TradeChan     chan *events.HandleOrderResult
+	TradeChan     chan *private.HandleOrderResult
 	sendChan      map[bool]chan []byte
 	AuthRequested *time.Time
 	Authorized    bool
@@ -183,12 +184,32 @@ func (c *ClientWs) Send(p bool, reqID string, method cryptodotcom.Operation, arg
 		}
 	case cryptodotcom.CreateOrderOperation:
 		if args != nil {
-			order := args["createOrder"].(requests.CreateOrder)
+			params := args["createOrder"].(requests.CreateOrder)
 			data = map[string]interface{}{
 				"id":     reqID,
 				"nonce":  nonce,
 				"method": method,
-				"params": order,
+				"params": params,
+			}
+		}
+	case cryptodotcom.CancelOrderOperation:
+		if args != nil {
+			params := args["cancelOrder"].(requests.CancelOrder)
+			data = map[string]interface{}{
+				"id":     reqID,
+				"nonce":  nonce,
+				"method": method,
+				"params": params,
+			}
+		}
+	case cryptodotcom.CancelAllOrderOperation:
+		if args != nil {
+			params := args["cancelAllOrders"].(requests.CancelAllOrders)
+			data = map[string]interface{}{
+				"id":     reqID,
+				"nonce":  nonce,
+				"method": method,
+				"params": params,
 			}
 		}
 	}
@@ -221,7 +242,7 @@ func (c *ClientWs) SetLoginChannel(lCh chan *events.Login) {
 	c.LoginChan = lCh
 }
 
-func (c *ClientWs) SetTradeChannel(tCh chan *events.HandleOrderResult) {
+func (c *ClientWs) SetTradeChannel(tCh chan *private.HandleOrderResult) {
 	c.TradeChan = tCh
 }
 
@@ -450,14 +471,31 @@ func (c *ClientWs) process(p bool, data []byte, e *events.Basic) bool {
 		}()
 		return true
 	case "private/create-order":
-		e := events.HandleOrderResult{}
+		e := private.HandleOrderResult{}
 		_ = json.Unmarshal(data, &e)
 		go func() {
 			if c.TradeChan != nil {
 				c.TradeChan <- &e
 			}
 		}()
-
+		return true
+	case "private/cancel-order":
+		e := private.HandleOrderResult{}
+		_ = json.Unmarshal(data, &e)
+		go func() {
+			if c.TradeChan != nil {
+				c.TradeChan <- &e
+			}
+		}()
+		return true
+	case "private/cancel-all-order":
+		e := private.HandleOrderResult{}
+		_ = json.Unmarshal(data, &e)
+		go func() {
+			if c.TradeChan != nil {
+				c.TradeChan <- &e
+			}
+		}()
 		return true
 	}
 
