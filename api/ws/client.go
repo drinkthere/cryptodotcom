@@ -6,14 +6,13 @@ import (
 	"fmt"
 	"github.com/drinkthere/cryptodotcom"
 	"github.com/drinkthere/cryptodotcom/events"
-	"github.com/drinkthere/cryptodotcom/models/trade"
+	requests "github.com/drinkthere/cryptodotcom/requests/ws/private"
 	"github.com/drinkthere/cryptodotcom/utils"
+	"github.com/gorilla/websocket"
 	"net"
 	"net/http"
 	"strconv"
 	"strings"
-
-	"github.com/gorilla/websocket"
 	"sync"
 	"time"
 )
@@ -184,7 +183,7 @@ func (c *ClientWs) Send(p bool, reqID string, method cryptodotcom.Operation, arg
 		}
 	case cryptodotcom.CreateOrderOperation:
 		if args != nil {
-			order := args["createOrder"].(trade.Order)
+			order := args["createOrder"].(requests.CreateOrder)
 			data = map[string]interface{}{
 				"id":     reqID,
 				"nonce":  nonce,
