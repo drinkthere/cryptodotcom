@@ -14,10 +14,10 @@ import (
 // https://www.okx.com/docs-v5/en/#websocket-api-private-channel
 type Private struct {
 	*ClientWs
-	oCh chan *private.Orders
-	bCh chan *private.Balances
-	pCh chan *private.Positions
-	//bnpCh chan *private.BalanceAndPosition
+	oCh   chan *private.Orders
+	bCh   chan *private.Balances
+	pCh   chan *private.Positions
+	bnpCh chan *private.BalanceAndPosition
 	//tCh   chan *private.Trade
 }
 
@@ -41,6 +41,12 @@ func (c *Private) Balances(ch chan *private.Balances) error {
 func (c *Private) Positions(ch chan *private.Positions) error {
 	c.pCh = ch
 	channelNames := []string{"user.positions"}
+	return c.Subscribe(true, channelNames)
+}
+
+func (c *Private) PositionAndBalance(ch chan *private.BalanceAndPosition) error {
+	c.bnpCh = ch
+	channelNames := []string{"user.position_balance"}
 	return c.Subscribe(true, channelNames)
 }
 
@@ -77,6 +83,20 @@ func (c *Private) Process(data []byte, e *events.Basic) bool {
 					}()
 				}
 				return true
+			} else if ch == "user.position_balance" {
+				e := private.BalanceAndPosition{}
+				err := json.Unmarshal(data, &e)
+				if err != nil {
+					return false
+				}
+				if len(e.Result.Data) > 0 {
+					go func() {
+						if c.bnpCh != nil {
+							c.bnpCh <- &e
+						}
+					}()
+				}
+				return true
 			} else if strings.HasPrefix(ch, "user.order") {
 				e := private.Orders{}
 				err := json.Unmarshal(data, &e)
@@ -92,43 +112,6 @@ func (c *Private) Process(data []byte, e *events.Basic) bool {
 				}
 				return true
 			}
-
-			//case "account":
-			//	e := private.Account{}
-			//	err := json.Unmarshal(data, &e)
-			//	if err != nil {
-			//		return false
-			//	}
-			//	go func() {
-			//		if c.aCh != nil {
-			//			c.aCh <- &e
-			//		}
-			//	}()
-			//	return true
-			//case "positions":
-			//	e := private.Position{}
-			//	err := json.Unmarshal(data, &e)
-			//	if err != nil {
-			//		return false
-			//	}
-			//	go func() {
-			//		if c.pCh != nil {
-			//			c.pCh <- &e
-			//		}
-			//	}()
-			//	return true
-			//case "balance_and_position":
-			//	e := private.BalanceAndPosition{}
-			//	err := json.Unmarshal(data, &e)
-			//	if err != nil {
-			//		return false
-			//	}
-			//	go func() {
-			//		if c.bnpCh != nil {
-			//			c.bnpCh <- &e
-			//		}
-			//	}()
-			//	return true
 		}
 	}
 	return false
