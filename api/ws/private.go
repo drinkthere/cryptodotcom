@@ -2,10 +2,12 @@ package ws
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/drinkthere/cryptodotcom"
 	"github.com/drinkthere/cryptodotcom/events"
 	"github.com/drinkthere/cryptodotcom/events/private"
 	requests "github.com/drinkthere/cryptodotcom/requests/ws/private"
+	"github.com/drinkthere/cryptodotcom/utils"
 	"strings"
 )
 
@@ -18,7 +20,6 @@ type Private struct {
 	bCh   chan *private.Balances
 	pCh   chan *private.Positions
 	pnbCh chan *private.PositionAndBalance
-	//tCh   chan *private.Trade
 }
 
 // NewPrivate returns a pointer to a fresh Private
@@ -48,6 +49,16 @@ func (c *Private) PositionAndBalance(ch chan *private.PositionAndBalance) error 
 	c.pnbCh = ch
 	channelNames := []string{"user.position_balance"}
 	return c.Subscribe(true, channelNames)
+}
+
+func (c *Private) CreateOrder(order requests.CreateOrder) error {
+	if c.TradeChan == nil {
+		return fmt.Errorf("trade channel has not been initialized")
+	}
+	args := map[string]interface{}{
+		"createOrder": order,
+	}
+	return c.Send(true, utils.GenerateRequestID(), cryptodotcom.CreateOrderOperation, args)
 }
 
 func (c *Private) Process(data []byte, e *events.Basic) bool {

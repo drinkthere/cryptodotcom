@@ -24,6 +24,8 @@ type (
 		Method  string                 `json:"method"`
 		Message string                 `json:"message,omitempty"`
 	}
+	HandleOrderResult struct {
+	}
 )
 
 //

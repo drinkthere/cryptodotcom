@@ -6,13 +6,13 @@ import (
 	"fmt"
 	"github.com/drinkthere/cryptodotcom"
 	"github.com/drinkthere/cryptodotcom/events"
+	"github.com/drinkthere/cryptodotcom/models/trade"
 	"github.com/drinkthere/cryptodotcom/utils"
 	"net"
 	"net/http"
 	"strconv"
 	"strings"
 
-	//"github.com/drinkthere/cryptodotcom/events"
 	"github.com/gorilla/websocket"
 	"sync"
 	"time"
@@ -31,6 +31,7 @@ type ClientWs struct {
 	ErrChan       chan *events.Basic
 	LoginChan     chan *events.Login
 	SuccessChan   chan *events.Basic
+	TradeChan     chan *events.HandleOrderResult
 	sendChan      map[bool]chan []byte
 	AuthRequested *time.Time
 	Authorized    bool
@@ -65,7 +66,6 @@ func NewClient(ctx context.Context, apiKey, secretKey string, url map[bool]crypt
 
 	c.Public = NewPublic(c)
 	c.Private = NewPrivate(c)
-	//c.Trade = NewTrade(c)
 	return c
 }
 
@@ -113,24 +113,29 @@ func (c *ClientWs) Login() error {
 	if c.AuthRequested != nil && time.Since(*c.AuthRequested).Seconds() < 30 {
 		return nil
 	}
-	return c.Send(true, utils.GenerateRequestID(), cryptodotcom.LoginOperation, []string{})
+	return c.Send(true, utils.GenerateRequestID(), cryptodotcom.LoginOperation, nil)
 }
 
 func (c *ClientWs) Subscribe(p bool, ch []string) error {
-	return c.Send(p, utils.GenerateRequestID(), cryptodotcom.SubscribeOperation, ch)
-
+	args := map[string]interface{}{
+		"channels": ch,
+	}
+	return c.Send(p, utils.GenerateRequestID(), cryptodotcom.SubscribeOperation, args)
 }
 
 func (c *ClientWs) Unsubscribe(p bool, ch []string) error {
-	return c.Send(p, utils.GenerateRequestID(), cryptodotcom.UnsubscribeOperation, ch)
+	args := map[string]interface{}{
+		"channels": ch,
+	}
+	return c.Send(p, utils.GenerateRequestID(), cryptodotcom.UnsubscribeOperation, args)
 }
 
 func (c *ClientWs) Pong(p bool, reqID string) error {
-	return c.Send(p, reqID, cryptodotcom.PongOperation, []string{})
+	return c.Send(p, reqID, cryptodotcom.PongOperation, nil)
 }
 
 // Send message through either connections
-func (c *ClientWs) Send(p bool, reqID string, method cryptodotcom.Operation, channelNames []string) error {
+func (c *ClientWs) Send(p bool, reqID string, method cryptodotcom.Operation, args map[string]interface{}) error {
 	// Crypto.com recommend adding a 1-second sleep after establishing the websocket connection, and before requests are sent.
 	// This will avoid occurrences of rate-limit (`TOO_MANY_REQUESTS`) errors, as the websocket rate limits are pro-rated based on the calendar-second that the websocket connection was opened.
 
@@ -166,14 +171,27 @@ func (c *ClientWs) Send(p bool, reqID string, method cryptodotcom.Operation, cha
 			"sig":     sig,
 			"nonce":   nonce,
 		}
-	default:
-		data = map[string]interface{}{
-			"id":     reqID,
-			"method": method,
-			"params": map[string][]string{
-				"channels": channelNames,
-			},
-			"nonce": nonce,
+	case cryptodotcom.SubscribeOperation:
+		if args != nil {
+			channels := args["channels"].([]string)
+			data = map[string]interface{}{
+				"id":     reqID,
+				"method": method,
+				"params": map[string][]string{
+					"channels": channels,
+				},
+				"nonce": nonce,
+			}
+		}
+	case cryptodotcom.CreateOrderOperation:
+		if args != nil {
+			order := args["createOrder"].(trade.Order)
+			data = map[string]interface{}{
+				"id":     reqID,
+				"nonce":  nonce,
+				"method": method,
+				"params": order,
+			}
 		}
 	}
 
@@ -203,6 +221,10 @@ func (c *ClientWs) SetErrChannel(errCh chan *events.Basic) {
 // SetLoginChannel set error channel
 func (c *ClientWs) SetLoginChannel(lCh chan *events.Login) {
 	c.LoginChan = lCh
+}
+
+func (c *ClientWs) SetTradeChannel(tCh chan *events.HandleOrderResult) {
+	c.TradeChan = tCh
 }
 
 // WaitForAuthorization waits for the auth responses and try to log in if it was needed
@@ -426,6 +448,15 @@ func (c *ClientWs) process(p bool, data []byte, e *events.Basic) bool {
 		go func() {
 			if c.LoginChan != nil {
 				c.LoginChan <- &e
+			}
+		}()
+		return true
+	case "private/create-order":
+		e := events.HandleOrderResult{}
+		_ = json.Unmarshal(data, &e)
+		go func() {
+			if c.TradeChan != nil {
+				c.TradeChan <- &e
 			}
 		}()
 
