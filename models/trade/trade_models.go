@@ -41,4 +41,13 @@ type (
 		StpScope string                 `json:"stp_scope"`
 		StpInst  string                 `json:"stp_inst"`
 	}
+
+	FeeRate struct {
+		SpotTier                   string `json:"spot_tier"`
+		DerivTier                  string `json:"deriv_tier"`
+		EffectiveSpotMakerRateBps  string `json:"effective_spot_maker_rate_bps"`
+		EffectiveSpotTakerRateBps  string `json:"effective_spot_taker_rate_bps"`
+		EffectiveDerivMakerRateBps string `json:"effective_deriv_maker_rate_bps"`
+		EffectiveDerivTakerRateBps string `json:"effective_deriv_taker_rate_bps"`
+	}
 )

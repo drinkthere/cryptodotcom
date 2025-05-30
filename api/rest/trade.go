@@ -109,3 +109,19 @@ func (c *Trade) ChangeAccountLeverage(req requests.ChangeAccountLeverage) (respo
 	err = d.Decode(&response)
 	return
 }
+
+func (c *Trade) GetFeeRate() (response responses.GetFeeRate, err error) {
+	var p string
+	var res *http.Response
+
+	p = "private/get-fee-rate"
+	res, err = c.client.Do(http.MethodPost, p, true, make(map[string]interface{}))
+
+	if err != nil {
+		return
+	}
+	defer res.Body.Close()
+	d := json.NewDecoder(res.Body)
+	err = d.Decode(&response)
+	return
+}

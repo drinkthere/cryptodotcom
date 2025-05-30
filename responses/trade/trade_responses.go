@@ -36,4 +36,9 @@ type (
 	ChangeAccountLeverage struct {
 		responses.Basic
 	}
+
+	GetFeeRate struct {
+		responses.Basic
+		Result *trade.FeeRate
+	}
 )
