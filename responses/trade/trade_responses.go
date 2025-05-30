@@ -27,4 +27,9 @@ type (
 	CancelAllOrders struct {
 		responses.Basic
 	}
+
+	GetAccountSettings struct {
+		responses.Basic
+		Result []*trade.AccountSettings `json:"result"`
+	}
 )

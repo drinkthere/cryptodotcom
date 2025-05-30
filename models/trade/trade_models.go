@@ -34,4 +34,11 @@ type (
 		InstrumentName     string                   `json:"instrument_name"`
 		FeeInstrumentName  string                   `json:"fee_instrument_name"`
 	}
+
+	AccountSettings struct {
+		Leverage cryptodotcom.JSONInt64 `json:"leverage"`
+		StpId    cryptodotcom.JSONInt64 `json:"stp_id"`
+		StpScope string                 `json:"stp_scope"`
+		StpInst  string                 `json:"stp_inst"`
+	}
 )

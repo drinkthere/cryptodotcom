@@ -76,3 +76,19 @@ func (c *Trade) CancelAllOrders(req requests.CancelAllOrders) (response response
 	err = d.Decode(&response)
 	return
 }
+
+func (c *Trade) GetAccountSettings() (response responses.CancelAllOrders, err error) {
+	var p string
+	var res *http.Response
+
+	p = "private/get-account-settings"
+	res, err = c.client.Do(http.MethodPost, p, true, make(map[string]interface{}))
+
+	if err != nil {
+		return
+	}
+	defer res.Body.Close()
+	d := json.NewDecoder(res.Body)
+	err = d.Decode(&response)
+	return
+}
