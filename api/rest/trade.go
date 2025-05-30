@@ -77,7 +77,7 @@ func (c *Trade) CancelAllOrders(req requests.CancelAllOrders) (response response
 	return
 }
 
-func (c *Trade) GetAccountSettings() (response responses.CancelAllOrders, err error) {
+func (c *Trade) GetAccountSettings() (response responses.GetAccountSettings, err error) {
 	var p string
 	var res *http.Response
 
