@@ -32,4 +32,8 @@ type (
 		responses.Basic
 		Result []*trade.AccountSettings `json:"result"`
 	}
+
+	ChangeAccountLeverage struct {
+		responses.Basic
+	}
 )

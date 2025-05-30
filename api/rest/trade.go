@@ -92,3 +92,20 @@ func (c *Trade) GetAccountSettings() (response responses.GetAccountSettings, err
 	err = d.Decode(&response)
 	return
 }
+
+func (c *Trade) ChangeAccountLeverage(req requests.ChangeAccountLeverage) (response responses.ChangeAccountLeverage, err error) {
+	var p string
+	var res *http.Response
+
+	p = "private/change-account-leverage"
+	m := cryptodotcom.S2M(req)
+	res, err = c.client.Do(http.MethodPost, p, true, m)
+
+	if err != nil {
+		return
+	}
+	defer res.Body.Close()
+	d := json.NewDecoder(res.Body)
+	err = d.Decode(&response)
+	return
+}

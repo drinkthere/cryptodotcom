@@ -30,4 +30,9 @@ type (
 		InstrumentName string `json:"instrument_name,omitempty"` // BTCUSD-PERP
 		Type           string `json:"type,omitempty"`            // LIMIT, TRIGGER, ALL
 	}
+
+	ChangeAccountLeverage struct {
+		AccountId string `json:"account_id"`
+		Leverage  int    `json:"leverage"`
+	}
 )
