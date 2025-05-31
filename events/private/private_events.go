@@ -97,21 +97,21 @@ type (
 		Data         []*PositionDetail `json:"data"`
 	}
 	PositionDetail struct {
-		AccountId            string                 `json:"account_id"`
-		Quantity             string                 `json:"quantity"`
-		SessionUnrealizedPnl string                 `json:"session_unrealized_pnl"`
-		Cost                 string                 `json:"cost"`
-		OpenPositionPnl      string                 `json:"open_position_pnl"`
-		OpenPosCost          string                 `json:"open_pos_cost"`
-		SessionPnl           string                 `json:"session_pnl"`
-		PosInitialMargin     string                 `json:"pos_initial_margin"`
-		PosMaintenanceMargin string                 `json:"pos_maintenance_margin"`
-		MarketValue          string                 `json:"market_value"`
-		MarkPrice            string                 `json:"mark_price"`
-		TargetLeverage       string                 `json:"target_leverage"`
-		UpdateTimestampMs    cryptodotcom.JSONInt64 `json:"update_timestamp_ms"`
-		InstrumentName       string                 `json:"instrument_name"`
-		Type                 string                 `json:"type"`
+		AccountId            string                `json:"account_id"`
+		Quantity             string                `json:"quantity"`
+		SessionUnrealizedPnl string                `json:"session_unrealized_pnl"`
+		Cost                 string                `json:"cost"`
+		OpenPositionPnl      string                `json:"open_position_pnl"`
+		OpenPosCost          string                `json:"open_pos_cost"`
+		SessionPnl           string                `json:"session_pnl"`
+		PosInitialMargin     string                `json:"pos_initial_margin"`
+		PosMaintenanceMargin string                `json:"pos_maintenance_margin"`
+		MarketValue          string                `json:"market_value"`
+		MarkPrice            string                `json:"mark_price"`
+		TargetLeverage       string                `json:"target_leverage"`
+		UpdateTimestampMs    cryptodotcom.JSONTime `json:"update_timestamp_ms"`
+		InstrumentName       string                `json:"instrument_name"`
+		Type                 string                `json:"type"`
 	}
 
 	PositionAndBalance struct {
@@ -136,15 +136,15 @@ type (
 	}
 
 	Pos struct {
-		AccountId         string                 `json:"account_id"`
-		InstrumentName    string                 `json:"instrument_name"`
-		Type              string                 `json:"type"`
-		Quantity          string                 `json:"quantity"`
-		Cost              string                 `json:"cost"`
-		OpenPositionPnl   string                 `json:"open_position_pnl"`
-		SessionPnl        string                 `json:"session_pnl"`
-		UpdateTimestampMs cryptodotcom.JSONInt64 `json:"update_timestamp_ms"`
-		OpenPosCost       string                 `json:"open_pos_cost"`
+		AccountId         string                `json:"account_id"`
+		InstrumentName    string                `json:"instrument_name"`
+		Type              string                `json:"type"`
+		Quantity          string                `json:"quantity"`
+		Cost              string                `json:"cost"`
+		OpenPositionPnl   string                `json:"open_position_pnl"`
+		SessionPnl        string                `json:"session_pnl"`
+		UpdateTimestampMs cryptodotcom.JSONTime `json:"update_timestamp_ms"`
+		OpenPosCost       string                `json:"open_pos_cost"`
 	}
 
 	HandleOrderResult struct {
